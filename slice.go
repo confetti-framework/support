@@ -1,6 +1,6 @@
 package support
 
-import "lanvard/support/caller"
+import "github.com/lanvard/support/caller"
 
 type Item []interface{}
 type Items []Item
