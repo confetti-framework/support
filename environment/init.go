@@ -16,7 +16,7 @@ func init() {
 
 	if err != nil {
 		// load from GOROOT/vendor
-		basePath := filepath.Dir(filepath.Dir(filepath.Dir(caller.CurrentDir())))
+		basePath := filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(caller.CurrentDir()))))
 
 		file := basePath + string(os.PathSeparator) + "lanvard/.env"
 		err := godotenv.Load(file)
