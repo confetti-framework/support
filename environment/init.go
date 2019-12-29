@@ -2,28 +2,24 @@ package environment
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/lanvard/support/caller"
+	"lanvard/config/entity"
 	"os"
-	"path/filepath"
+	"strings"
 )
 
 func init() {
-	// load from project/vendor
-	basePath := filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(caller.CurrentDir()))))
+	var file string
 
-	file := basePath + string(os.PathSeparator) + ".env"
+	if strings.HasSuffix(os.Args[0], ".test") {
+		file = entity.NewBasePath().EnvironmentFile()
+	} else {
+		file = entity.NewBasePath().EnvironmentTestingFile()
+	}
+
 	err := godotenv.Load(file)
 
 	if err != nil {
-		// load from GOROOT/vendor
-		basePath := filepath.Dir(filepath.Dir(filepath.Dir(filepath.Dir(caller.CurrentDir()))))
-
-		file := basePath + string(os.PathSeparator) + "lanvard/.env"
-		err := godotenv.Load(file)
-
-		if err != nil {
-			println(err)
-			panic("Error loading .env file in directory " + file)
-		}
+		println(err)
+		panic("Error loading .env file in directory " + file)
 	}
 }

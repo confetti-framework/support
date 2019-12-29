@@ -1,9 +1,9 @@
 package test
 
 import (
+	kernelAlias "github.com/lanvard/contract/http"
+	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
-	kernelAlias "lanvard/contract/http"
-	"lanvard/support"
 	"reflect"
 	"testing"
 )

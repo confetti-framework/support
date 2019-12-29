@@ -14,6 +14,10 @@ func Name(element interface{}) string {
 		return reflect.TypeOf(element).String()
 	}
 
+	if Type(element) == reflect.Ptr && element == nil {
+		panic("Can't bind interface. To bind an interface, use the following syntax: (*INTERFACE)(nil)")
+	}
+
 	return reflect.TypeOf(element).Elem().String()
 }
 
@@ -26,7 +30,7 @@ func Package(element interface{}) string {
 	return reflect.TypeOf(element).Elem().PkgPath()
 }
 
-func Type(element interface{}) interface{} {
+func Type(element interface{}) reflect.Kind {
 
 	if element == nil {
 		return reflect.TypeOf(&element).Kind()
