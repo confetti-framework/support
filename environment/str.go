@@ -1,11 +1,10 @@
-package str
+package environment
 
 import (
-	_ "github.com/lanvard/support/environment"
 	"os"
 )
 
-func Env(search string) string {
+func StrEnv(search string) string {
 	env, OK := os.LookupEnv(search)
 	if !OK {
 		panic("Enviroment '" + search + "' not found")
@@ -14,7 +13,7 @@ func Env(search string) string {
 	return env
 }
 
-func EnvOr(search string, def string) string {
+func StrEnvOr(search string, def string) string {
 	env, OK := os.LookupEnv(search)
 	if !OK {
 		return def

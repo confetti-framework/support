@@ -1,11 +1,10 @@
-package boo
+package environment
 
 import (
-	_ "github.com/lanvard/support/environment"
 	"os"
 )
 
-func Env(search string) bool {
+func BoolEnv(search string) bool {
 	env, OK := os.LookupEnv(search)
 	if !OK {
 		panic("Enviroment '" + search + "' not found")
@@ -14,7 +13,7 @@ func Env(search string) bool {
 	return env == "true"
 }
 
-func EnvOr(search string, def bool) bool {
+func BoolEnvOr(search string, def bool) bool {
 	env, OK := os.LookupEnv(search)
 	if !OK {
 		return def
