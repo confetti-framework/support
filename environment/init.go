@@ -2,18 +2,18 @@ package environment
 
 import (
 	"github.com/joho/godotenv"
-	"lanvard/config/entity"
+	"github.com/lanvard/contract/inter"
 	"os"
 	"strings"
 )
 
-func init() {
+func BootstrapEnvironment(basePath inter.BasePath)  {
 	var file string
 
 	if strings.HasSuffix(os.Args[0], ".test") {
-		file = entity.NewBasePath().EnvironmentFile()
+		file = basePath.EnvironmentTestingFile()
 	} else {
-		file = entity.NewBasePath().EnvironmentTestingFile()
+		file = basePath.EnvironmentFile()
 	}
 
 	err := godotenv.Load(file)
