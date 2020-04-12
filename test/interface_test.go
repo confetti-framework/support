@@ -1,7 +1,6 @@
 package test
 
 import (
-	kernelAlias "github.com/lanvard/contract/http"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	"reflect"
@@ -28,7 +27,7 @@ func TestNameFromString(t *testing.T) {
 
 func TestNameWithAlias(t *testing.T) {
 	name := support.Name((*kernelAlias.Kernel)(nil))
-	assert.Equal(t, "http.Kernel", name)
+	assert.Equal(t, "http.HttpKernel", name)
 }
 
 func TestTypeFromInterface(t *testing.T) {
