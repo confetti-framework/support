@@ -5,10 +5,7 @@ import (
 )
 
 func StrEnv(search string) string {
-	env, OK := os.LookupEnv(search)
-	if !OK {
-		panic("Enviroment '" + search + "' not found")
-	}
+	env, _ := os.LookupEnv(search)
 
 	return env
 }

@@ -25,11 +25,6 @@ func TestNameFromString(t *testing.T) {
 	assert.Equal(t, "InterfaceByString", name)
 }
 
-func TestNameWithAlias(t *testing.T) {
-	name := support.Name((*kernelAlias.Kernel)(nil))
-	assert.Equal(t, "http.HttpKernel", name)
-}
-
 func TestTypeFromInterface(t *testing.T) {
 	reflectType := support.Type((*testInterface)(nil))
 	assert.Equal(t, reflect.Ptr, reflectType)

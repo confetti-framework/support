@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func BootstrapEnvironment(basePath inter.BasePath)  {
+func Bootstrap(basePath inter.BasePath) error  {
 	var file string
 
 	if strings.HasSuffix(os.Args[0], ".test") {
@@ -16,10 +16,5 @@ func BootstrapEnvironment(basePath inter.BasePath)  {
 		file = basePath.EnvironmentFile()
 	}
 
-	err := godotenv.Load(file)
-
-	if err != nil {
-		println(err)
-		panic("Error loading .env file in directory " + file)
-	}
+	return godotenv.Load(file)
 }
