@@ -23,7 +23,7 @@ func NewValueE(source string, error error) Value {
 }
 
 func (v Value) String() string {
-	if nil != v.error {
+	if v.error != nil {
 		panic(v.error)
 	}
 
@@ -36,7 +36,7 @@ func (v Value) StringE() (string, error) {
 
 func (v Value) Strings() []string {
 	values, err := v.StringsE()
-	if nil != err {
+	if err != nil {
 		panic(err)
 	}
 
@@ -49,7 +49,7 @@ func (v Value) StringsE() ([]string, error) {
 
 func (v Value) Number() int {
 	values, err := v.NumberE()
-	if nil != err {
+	if err != nil {
 		panic(err)
 	}
 
@@ -57,11 +57,11 @@ func (v Value) Number() int {
 }
 
 func (v Value) NumberE() (int, error) {
-	if nil != v.error {
+	if v.error != nil {
 		return 0, v.error
 	}
 
-	if "" == v.source {
+	if v.source == "" {
 		return 0, nil
 	}
 
@@ -70,7 +70,7 @@ func (v Value) NumberE() (int, error) {
 
 func (v Value) Numbers() []int {
 	values, err := v.NumbersE()
-	if nil != err {
+	if err != nil {
 		panic(err)
 	}
 
@@ -79,7 +79,7 @@ func (v Value) Numbers() []int {
 
 func (v Value) NumbersE() ([]int, error) {
 	rawValues := v.Split(",")
-	if nil != v.error {
+	if v.error != nil {
 		return nil, v.error
 	}
 
@@ -87,7 +87,7 @@ func (v Value) NumbersE() ([]int, error) {
 
 	for _, rawValue := range rawValues {
 		value, err := strconv.Atoi(rawValue)
-		if nil != err {
+		if err != nil {
 			return nil, err
 		}
 
