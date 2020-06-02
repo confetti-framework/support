@@ -1,6 +1,7 @@
 package support
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -10,11 +11,20 @@ type Value struct {
 	error  error
 }
 
-func NewEmpty() Value {
-	return Value{}
-}
+func NewValue(input interface{}) Value {
+	var source string
 
-func NewValue(source string) Value {
+	switch input.(type) {
+	case nil:
+		source = ""
+	case int:
+		source = strconv.Itoa(input.(int))
+	case string:
+		source = input.(string)
+	default:
+		fmt.Println("type unknown")
+	}
+
 	return Value{source: source}
 }
 
