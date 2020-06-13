@@ -1,30 +1,21 @@
 package support
 
 import (
-	"fmt"
+	"errors"
 	"strconv"
 	"strings"
 )
 
 type Value struct {
-	source string
+	source interface{}
 	error  error
 }
 
-func NewValue(input interface{}) Value {
-	var source string
+func (v Value) Source() interface{} {
+	return v.source
+}
 
-	switch input.(type) {
-	case nil:
-		source = ""
-	case int:
-		source = strconv.Itoa(input.(int))
-	case string:
-		source = input.(string)
-	default:
-		fmt.Println("type unknown")
-	}
-
+func NewValue(source interface{}) Value {
 	return Value{source: source}
 }
 
@@ -33,15 +24,29 @@ func NewValueE(source string, error error) Value {
 }
 
 func (v Value) String() string {
-	if v.error != nil {
+	result, err := v.StringE()
+	if err != nil {
 		panic(v.error)
 	}
 
-	return v.source
+	return result
 }
 
 func (v Value) StringE() (string, error) {
-	return v.source, v.error
+	if v.error != nil {
+		return "", v.error
+	}
+
+	switch v.source.(type) {
+	case nil:
+		return "", nil
+	case int:
+		return strconv.Itoa(v.source.(int)), nil
+	case string:
+		return v.source.(string), nil
+	default:
+		return "", errors.New("type unknown")
+	}
 }
 
 func (v Value) Strings() []string {
@@ -71,11 +76,11 @@ func (v Value) NumberE() (int, error) {
 		return 0, v.error
 	}
 
-	if v.source == "" {
+	if v.String() == "" {
 		return 0, nil
 	}
 
-	return strconv.Atoi(v.source)
+	return strconv.Atoi(v.String())
 }
 
 func (v Value) Numbers() []int {
@@ -121,5 +126,5 @@ func (v Value) Present() bool {
 // If Value does not contain separator and separator is not empty, Split returns a
 // slice of length 1 whose only element is Value.
 func (v Value) Split(separator string) []string {
-	return strings.Split(v.source, separator)
+	return strings.Split(v.String(), separator)
 }

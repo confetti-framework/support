@@ -1,20 +1,23 @@
 package support
 
-import "github.com/lanvard/support/caller"
-
-type Item []interface{}
-type Items []Item
+type Items []Value
 
 type Slice struct {
 	Items Items
 }
 
-func NewSlice(items Items) Slice {
-	return Slice{Items: items}
+func NewSlice(items ...interface{}) Slice {
+	slice := Slice{}
+
+	for _, item := range items {
+		slice.Items = append(slice.Items, NewValue(item))
+	}
+
+	return slice
 }
 
-func (c Slice) Push(item Item) Slice {
-	c.Items = append(c.Items, item)
+func (c *Slice) Push(item interface{}) *Slice {
+	c.Items = append(c.Items, NewValue(item))
 
 	return c
 }
@@ -34,4 +37,13 @@ func (c Slice) ToSlice() Items {
 	return c.Items
 }
 
-func (c Slice) Path() string { return caller.Path() }
+// Determine if an item exists in the collection by a string
+func (c Slice) Contains(search interface{}) bool {
+	for _, item := range c.Items {
+		if item.Source() == NewValue(search).Source() {
+			return true
+		}
+	}
+
+	return false
+}
