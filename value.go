@@ -11,16 +11,26 @@ type Value struct {
 	error  error
 }
 
+func NewValue(val interface{}) Value {
+	switch val.(type) {
+	case Value:
+		return val.(Value)
+	default:
+		return Value{source: val}
+	}
+}
+
+func NewValueE(val interface{}, error error) Value {
+	switch val.(type) {
+	case Value:
+		return Value{source: val.(Value).source, error: error}
+	default:
+		return Value{source: val, error: error}
+	}
+}
+
 func (v Value) Source() interface{} {
 	return v.source
-}
-
-func NewValue(source interface{}) Value {
-	return Value{source: source}
-}
-
-func NewValueE(source string, error error) Value {
-	return Value{source: source, error: error}
 }
 
 func (v Value) String() string {
