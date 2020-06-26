@@ -2,26 +2,77 @@ package support
 
 import (
 	"errors"
-	"github.com/lanvard/contract/inter"
+	"fmt"
+	"reflect"
+	"strconv"
 )
 
-type Collection []inter.Value
+type Collection []Value
 
 func NewCollection(items ...interface{}) Collection {
 	collection := Collection{}
 
 	for _, item := range items {
-		collection = append(collection, NewValue(item))
+		switch Type(item) {
+		case reflect.Array, reflect.Slice:
+			for _, value := range item.([]string) {
+				collection = append(collection, NewValue(value))
+			}
+		default:
+			collection = append(collection, NewValue(item))
+		}
 	}
 
 	return collection
 }
 
-func (c Collection) Source() []inter.Value {
+func (c Collection) Source() []Value {
 	return c
 }
 
-func (c Collection) First() inter.Value {
+func (c Collection) Get(key string) Value {
+	if key == "" {
+		return NewValue(c)
+	}
+
+	currentKey, rest := splitKey(key)
+
+	// when you request something with an Asterisk, you always develop a collection
+	if currentKey == "*" {
+		typeOfItem := c.getTypeOfItem()
+		switch typeOfItem {
+		case reflect.Slice, reflect.Array:
+			flattenCollection := NewCollection()
+			for _, value := range c {
+				flattenCollection = append(flattenCollection, value.Source().(Collection)...)
+			}
+
+			// case Map:
+			// 	deepMap := value.Source().(Map).FlattenGet(joinRest(rest))
+			// 	flattenCollection = append(flattenCollection, deepMap)
+			// default:
+			// 	return value.Source()
+			return NewValue(flattenCollection.Get(joinRest(rest)))
+		case reflect.String:
+			return NewValue(c)
+		default:
+			fmt.Println(typeOfItem)
+		}
+	}
+
+	index, err := strconv.Atoi(key)
+	if err != nil {
+		return NewValueE(nil, errors.New(key + " can only be a number or *"))
+	}
+
+	if len(c) < (index + 1) {
+		return NewValueE(nil, errors.New(key + " not found"))
+	}
+
+	return c[index]
+}
+
+func (c Collection) First() Value {
 	if len(c) == 0 {
 		return NewValueE("", errors.New("value not found in collection"))
 	}
@@ -29,13 +80,11 @@ func (c Collection) First() inter.Value {
 	return c[0]
 }
 
-func (c Collection) Push(item interface{}) inter.Collection {
-	result := append(c, NewValue(item))
-
-	return result
+func (c Collection) Push(item interface{}) Collection {
+	return append(c, NewValue(item))
 }
 
-func (c Collection) Reverse() inter.Collection {
+func (c Collection) Reverse() Collection {
 	items := c
 	for left, right := 0, len(items)-1; left < right; left, right = left+1, right-1 {
 		items[left], items[right] = items[right], items[left]
@@ -58,4 +107,16 @@ func (c Collection) Contains(search interface{}) bool {
 // The len method returns the length of the collection
 func (c Collection) Len() int {
 	return len(c.Source())
+}
+
+func (c Collection) Empty() bool {
+	return len(c) == 0
+}
+
+func (c Collection) getTypeOfItem() reflect.Kind {
+	if c.Empty() {
+		return reflect.Invalid
+	}
+
+	return Type(c.First().Source())
 }

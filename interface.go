@@ -31,9 +31,17 @@ func Package(element interface{}) string {
 }
 
 func Type(element interface{}) reflect.Kind {
-
 	if element == nil {
 		return reflect.TypeOf(&element).Kind()
+	}
+
+	switch element.(type) {
+	case Collection:
+		return reflect.Slice
+	case Map:
+		return reflect.Map
+	case string:
+		return reflect.String
 	}
 
 	return reflect.TypeOf(element).Kind()

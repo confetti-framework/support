@@ -2,6 +2,7 @@ package support
 
 import (
 	"errors"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -11,13 +12,20 @@ type Value struct {
 	error  error
 }
 
-func NewValue(val interface{}) Value {
-	switch val.(type) {
+func NewValue(value interface{}) Value {
+	switch value.(type) {
+	case Collection, Map:
+		return Value{source: value}
 	case Value:
-		return val.(Value)
-	default:
-		return Value{source: val}
+		return value.(Value)
 	}
+
+	switch Type(value) {
+	case reflect.Slice, reflect.Array:
+		return NewValue(NewCollection(value))
+	}
+
+	return Value{source: value}
 }
 
 func NewValueE(val interface{}, error error) Value {
@@ -33,6 +41,56 @@ func (v Value) Source() interface{} {
 	return v.source
 }
 
+func (v Value) Error() error {
+	return v.error
+}
+
+func (v Value) Get(key string) Value {
+	if key == "" {
+		return v
+	}
+
+	currentKey, rest := splitKey(key)
+
+	// when you request something with an Asterisk, you always develop a collection
+	if currentKey == "*" {
+
+		switch v.source.(type) {
+		case Collection:
+			return v.source.(Collection).Get(joinRest(rest))
+		case Map:
+			return v.source.(Map).Get(joinRest(rest))
+		default:
+			return NewValueE(nil, errors.New(currentKey+": is not a Collection or Map"))
+		}
+
+	}
+
+	return NewValue("todo")
+}
+
+// A value can contain a collection.
+func (v Value) Collection() Collection {
+	switch v.source.(type) {
+	case Collection:
+		return v.source.(Collection)
+	case Map:
+		return v.source.(Map).Collection()
+	default:
+		return NewCollection(v.source)
+	}
+}
+
+// A value can contain a Map.
+func (v Value) Map() Map {
+	switch valueType := v.source.(type) {
+	case Map:
+		return v.source.(Map)
+	default:
+		panic("can't create map from reflect.Kind " + strconv.Itoa(int(Type(valueType))))
+	}
+}
+
 func (v Value) String() string {
 	result, err := v.StringE()
 	if err != nil {
@@ -42,21 +100,25 @@ func (v Value) String() string {
 	return result
 }
 
-func (v Value) StringE() (string, error) {
-	if v.error != nil {
-		return "", v.error
-	}
-
+func (v Value) StringE() (result string, err error) {
 	switch v.source.(type) {
 	case nil:
-		return "", nil
+		result = ""
 	case int:
-		return strconv.Itoa(v.source.(int)), nil
+		result = strconv.Itoa(v.source.(int))
 	case string:
-		return v.source.(string), nil
+		result = v.source.(string)
+	case Collection:
+		result, err = v.Collection().First().StringE()
 	default:
-		return "", errors.New("type unknown")
+		err = errors.New("can't convert value to string")
 	}
+
+	if v.error != nil {
+		err = v.error
+	}
+
+	return
 }
 
 func (v Value) Strings() []string {
@@ -81,16 +143,28 @@ func (v Value) Number() int {
 	return values
 }
 
-func (v Value) NumberE() (int, error) {
+func (v Value) NumberE() (result int, err error) {
+	switch v.source.(type) {
+	case int:
+		result = v.source.(int)
+	case string:
+		stringValue := v.source.(string)
+		if stringValue == "" {
+			result = 0
+		} else {
+			result, err = strconv.Atoi(stringValue)
+		}
+	case Collection:
+		result, err = v.Collection().First().NumberE()
+	default:
+		err = errors.New("can't convert value to number")
+	}
+
 	if v.error != nil {
-		return 0, v.error
+		err = v.error
 	}
 
-	if v.String() == "" {
-		return 0, nil
-	}
-
-	return strconv.Atoi(v.String())
+	return
 }
 
 func (v Value) Numbers() []int {
@@ -123,11 +197,11 @@ func (v Value) NumbersE() ([]int, error) {
 }
 
 func (v Value) Empty() bool {
-	return "" == v.source
+	return v.source == nil || v.source == ""
 }
 
 func (v Value) Present() bool {
-	return "" != v.source
+	return v.source != nil && v.source != ""
 }
 
 // Split slices Value into all substrings separated by separator and returns a slice of
