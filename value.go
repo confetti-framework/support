@@ -23,6 +23,8 @@ func NewValue(value interface{}) Value {
 	switch Type(value) {
 	case reflect.Slice, reflect.Array:
 		return NewValue(NewCollection(value))
+	case reflect.Map:
+		return Value{source: NewMap(value.(map[string]interface{}))}
 	}
 
 	return Value{source: value}
@@ -61,12 +63,23 @@ func (v Value) Get(key string) Value {
 		case Map:
 			return v.source.(Map).Get(joinRest(rest))
 		default:
-			return NewValueE(nil, errors.New(currentKey+": is not a Collection or Map"))
+			return NewValueE(nil, errors.New("*: is not a Collection or Map"))
 		}
 
 	}
 
-	return NewValue("todo")
+	switch v.source.(type) {
+	case Collection:
+		keyInt, err := strconv.Atoi(currentKey)
+		if err != nil {
+			return NewValueE(nil, err)
+		}
+		return v.source.(Collection)[keyInt].Get(joinRest(rest))
+	case Map:
+		return v.source.(Map)[currentKey].Get(joinRest(rest))
+	default:
+		return NewValueE(nil, errors.New(currentKey+": is not a Collection or Map"))
+	}
 }
 
 // A value can contain a collection.
@@ -94,7 +107,7 @@ func (v Value) Map() Map {
 func (v Value) String() string {
 	result, err := v.StringE()
 	if err != nil {
-		panic(v.error)
+		panic(err)
 	}
 
 	return result
@@ -110,6 +123,8 @@ func (v Value) StringE() (result string, err error) {
 		result = v.source.(string)
 	case Collection:
 		result, err = v.Collection().First().StringE()
+	case Map:
+		err = errors.New("can't convert map to string")
 	default:
 		err = errors.New("can't convert value to string")
 	}

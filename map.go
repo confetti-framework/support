@@ -7,6 +7,18 @@ import (
 
 type Map map[string]Value
 
+func NewMap(itemsRange ...map[string]interface{}) Map {
+	result := Map{}
+
+	for _, items := range itemsRange {
+		for key, item := range items {
+			result[key] = NewValue(item)
+		}
+	}
+
+	return result
+}
+
 func NewMapByString(itemsRange ...map[string]string) Map {
 	result := Map{}
 
@@ -44,7 +56,7 @@ func (m Map) Source() map[string]Value {
 // nil. To access multiple values, use GetCollection or Collection.
 func (m Map) Get(key string) Value {
 	if key == "" {
-		return NewValue(nil)
+		return NewValue(m)
 	}
 
 	currentKey, rest := splitKey(key)
@@ -82,10 +94,6 @@ func (m Map) Get(key string) Value {
 	}
 }
 
-func (m Map) GetMany(key string) Collection {
-	return m.Get(key).Collection()
-}
-
 // Set sets the key to value. It replaces any existing
 // values.
 func (m Map) Set(key string, value Value) Map {
@@ -114,8 +122,8 @@ func (m Map) Push(key string, input interface{}) Map {
 	return m
 }
 
-// Del deletes the values associated with key.
-func (m Map) Del(key string) {
+// Delete deletes the values associated with key.
+func (m Map) Delete(key string) {
 	delete(m, key)
 }
 
@@ -136,4 +144,12 @@ func (m Map) Merge(maps ...Map) Map {
 	}
 
 	return m
+}
+
+func (m Map) First() Value {
+	return m.Collection().First()
+}
+
+func (m Map) Empty() bool {
+	return len(m) == 0
 }

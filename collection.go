@@ -2,7 +2,6 @@ package support
 
 import (
 	"errors"
-	"fmt"
 	"reflect"
 	"strconv"
 )
@@ -15,8 +14,14 @@ func NewCollection(items ...interface{}) Collection {
 	for _, item := range items {
 		switch Type(item) {
 		case reflect.Array, reflect.Slice:
-			for _, value := range item.([]string) {
-				collection = append(collection, NewValue(value))
+			if interfaces, ok := item.([]interface{}); ok {
+				for _, value := range interfaces {
+					collection = append(collection, NewValue(value))
+				}
+			} else if strings, ok := item.([]string); ok {
+				for _, value := range strings {
+					collection = append(collection, NewValue(value))
+				}
 			}
 		default:
 			collection = append(collection, NewValue(item))
@@ -39,34 +44,31 @@ func (c Collection) Get(key string) Value {
 
 	// when you request something with an Asterisk, you always develop a collection
 	if currentKey == "*" {
-		typeOfItem := c.getTypeOfItem()
-		switch typeOfItem {
-		case reflect.Slice, reflect.Array:
-			flattenCollection := NewCollection()
-			for _, value := range c {
-				flattenCollection = append(flattenCollection, value.Source().(Collection)...)
-			}
 
-			// case Map:
-			// 	deepMap := value.Source().(Map).FlattenGet(joinRest(rest))
-			// 	flattenCollection = append(flattenCollection, deepMap)
-			// default:
-			// 	return value.Source()
-			return NewValue(flattenCollection.Get(joinRest(rest)))
-		case reflect.String:
-			return NewValue(c)
-		default:
-			fmt.Println(typeOfItem)
+		flattenCollection := NewCollection()
+		for _, value := range c {
+			switch Type(value.Source()) {
+			case reflect.Slice, reflect.Array:
+				flattenCollection = append(flattenCollection, value.Source().(Collection)...)
+			case reflect.Map:
+				flattenCollection = append(flattenCollection, value.Source().(Map).Collection()...)
+			case reflect.String, reflect.Int, reflect.Float64, reflect.Float32:
+				return NewValue(c)
+			default:
+				panic("value " + Name(value) + " has a unknown type ")
+			}
 		}
+
+		return NewValue(flattenCollection.Get(joinRest(rest)))
 	}
 
 	index, err := strconv.Atoi(key)
 	if err != nil {
-		return NewValueE(nil, errors.New(key + " can only be a number or *"))
+		return NewValueE(nil, errors.New(key+" can only be a number or *"))
 	}
 
 	if len(c) < (index + 1) {
-		return NewValueE(nil, errors.New(key + " not found"))
+		return NewValueE(nil, errors.New(key+" not found"))
 	}
 
 	return c[index]
@@ -111,12 +113,4 @@ func (c Collection) Len() int {
 
 func (c Collection) Empty() bool {
 	return len(c) == 0
-}
-
-func (c Collection) getTypeOfItem() reflect.Kind {
-	if c.Empty() {
-		return reflect.Invalid
-	}
-
-	return Type(c.First().Source())
 }
