@@ -48,7 +48,7 @@ func (v Value) Error() error {
 }
 
 func (v Value) Get(key string) Value {
-	if key == "" {
+	if key == "" || v.Error() != nil {
 		return v
 	}
 
