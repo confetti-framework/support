@@ -12,6 +12,11 @@ func NewCollection(items ...interface{}) Collection {
 	collection := Collection{}
 
 	for _, item := range items {
+		if inputCollection, ok := item.(Collection); ok {
+			collection = append(collection, inputCollection...)
+			continue
+		}
+
 		switch Type(item) {
 		case reflect.Array, reflect.Slice:
 			if interfaces, ok := item.([]interface{}); ok {
@@ -22,6 +27,8 @@ func NewCollection(items ...interface{}) Collection {
 				for _, value := range strings {
 					collection = append(collection, NewValue(value))
 				}
+			} else {
+				panic("Can't convert items to collection")
 			}
 		default:
 			collection = append(collection, NewValue(item))
@@ -31,8 +38,34 @@ func NewCollection(items ...interface{}) Collection {
 	return collection
 }
 
-func (c Collection) Source() []Value {
-	return c
+func (c Collection) Raw() []interface{} {
+	collection, err := c.RawE()
+	if err != nil {
+		panic(err)
+	}
+
+	return collection
+}
+
+func (c Collection) RawE() ([]interface{}, Errors) {
+	var result []interface{}
+	var err Errors
+
+	for _, value := range c {
+		raw, valErr := value.RawE()
+
+		// Handle value
+		result = append(result, raw)
+
+		// Handle errors
+		if multiErr, ok := valErr.(Errors); ok {
+			err = append(err, multiErr...)
+		} else if valErr != nil{
+			err = append(err, valErr)
+		}
+	}
+
+	return result, err
 }
 
 func (c Collection) Get(key string) Value {
@@ -108,7 +141,7 @@ func (c Collection) Contains(search interface{}) bool {
 
 // The len method returns the length of the collection
 func (c Collection) Len() int {
-	return len(c.Source())
+	return len(c)
 }
 
 func (c Collection) Empty() bool {

@@ -47,8 +47,34 @@ func NewMapByUrlValues(itemsRange ...url.Values) Map {
 	return result
 }
 
-func (m Map) Source() map[string]Value {
-	return m
+func (m Map) Raw() interface{} {
+	result, err := m.RawE()
+	if err != nil {
+		panic(err)
+	}
+
+	return result
+}
+
+func (m Map) RawE() (interface{}, Errors) {
+	result := map[string]interface{}{}
+	var err Errors
+
+	for key, value := range m {
+		raw, valErr := value.RawE()
+
+		// Handle value
+		result[key] = raw
+
+		// Handle errors
+		if multiErr, ok := valErr.(Errors); ok {
+			err = append(err, multiErr...)
+		} else if valErr != nil {
+			err = append(err, valErr)
+		}
+	}
+
+	return result, err
 }
 
 // Get gets the first value associated with the given key.
@@ -64,7 +90,7 @@ func (m Map) Get(key string) Value {
 	// when you request something with an Asterisk, you always develop a collection
 	if currentKey == "*" {
 		collection := NewCollection()
-		for _, values := range m.Source() {
+		for _, values := range m {
 			for _, value := range values.Collection() {
 				collection = collection.Push(value)
 			}
@@ -74,7 +100,6 @@ func (m Map) Get(key string) Value {
 	}
 
 	value, found := m[currentKey]
-
 	if !found {
 		return NewValueE(nil, errors.New(key + " not found"))
 	}
@@ -138,7 +163,7 @@ func (m Map) Collection() Collection {
 
 func (m Map) Merge(maps ...Map) Map {
 	for _, bag := range maps {
-		for key, item := range bag.Source() {
+		for key, item := range bag {
 			m.Push(key, item)
 		}
 	}

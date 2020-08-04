@@ -30,17 +30,45 @@ func NewValue(value interface{}) Value {
 	return Value{source: value}
 }
 
-func NewValueE(val interface{}, error error) Value {
+func NewValueE(val interface{}, inputErr interface{}) Value {
+	var err error
+	if e, ok := inputErr.(string); ok {
+		err = errors.New(e)
+	}
+
 	switch val.(type) {
 	case Value:
-		return Value{source: val.(Value).source, error: error}
+		return Value{source: val.(Value).source, error: err}
 	default:
-		return Value{source: val, error: error}
+		return Value{source: val, error: err}
 	}
 }
 
 func (v Value) Source() interface{} {
 	return v.source
+}
+
+func (v Value) Raw() interface{} {
+	value, err := v.RawE()
+	if err != nil && err.Error() != "" {
+		panic(err)
+	}
+
+	return value
+}
+
+func (v Value) RawE() (interface{}, error) {
+	if result, ok := v.source.(Value); ok {
+		return result.RawE()
+	}
+	if result, ok := v.source.(Collection); ok {
+		return result.RawE()
+	}
+	if result, ok := v.source.(Map); ok {
+		return result.RawE()
+	}
+
+	return v.source, v.error
 }
 
 func (v Value) Error() error {
@@ -119,12 +147,16 @@ func (v Value) StringE() (result string, err error) {
 		result = ""
 	case int:
 		result = strconv.Itoa(v.source.(int))
+	case float32:
+		result = strconv.FormatFloat(float64(v.source.(float32)), 'E', -1, 32)
+	case float64:
+		result = strconv.FormatFloat(v.source.(float64), 'f', -1, 64)
 	case string:
 		result = v.source.(string)
 	case Collection:
 		result, err = v.Collection().First().StringE()
 	case Map:
-		err = errors.New("can't convert map to string")
+		return v.Map().First().StringE()
 	default:
 		err = errors.New("can't convert value to string")
 	}
@@ -134,19 +166,6 @@ func (v Value) StringE() (result string, err error) {
 	}
 
 	return
-}
-
-func (v Value) Strings() []string {
-	values, err := v.StringsE()
-	if err != nil {
-		panic(err)
-	}
-
-	return values
-}
-
-func (v Value) StringsE() ([]string, error) {
-	return v.Split(","), v.error
 }
 
 func (v Value) Number() int {
@@ -182,35 +201,6 @@ func (v Value) NumberE() (result int, err error) {
 	return
 }
 
-func (v Value) Numbers() []int {
-	values, err := v.NumbersE()
-	if err != nil {
-		panic(err)
-	}
-
-	return values
-}
-
-func (v Value) NumbersE() ([]int, error) {
-	rawValues := v.Split(",")
-	if v.error != nil {
-		return nil, v.error
-	}
-
-	var result []int
-
-	for _, rawValue := range rawValues {
-		value, err := strconv.Atoi(rawValue)
-		if err != nil {
-			return nil, err
-		}
-
-		result = append(result, value)
-	}
-
-	return result, nil
-}
-
 func (v Value) Empty() bool {
 	return v.source == nil || v.source == ""
 }
@@ -224,6 +214,12 @@ func (v Value) Present() bool {
 //
 // If Value does not contain separator and separator is not empty, Split returns a
 // slice of length 1 whose only element is Value.
-func (v Value) Split(separator string) []string {
-	return strings.Split(v.String(), separator)
+func (v Value) Split(separator string) Collection {
+	rawStrings := strings.Split(v.String(), separator)
+	var result Collection
+	for _, rawString := range rawStrings {
+		result = append(result, NewValue(rawString))
+	}
+
+	return NewCollection(result)
 }
