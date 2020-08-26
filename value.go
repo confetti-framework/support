@@ -205,8 +205,6 @@ func (v Value) FloatE() (result float64, err error) {
 		result, err = cast.ToFloat64E(source)
 	}
 
-	// todo test map
-
 	if v.error != nil {
 		err = v.error
 	}
