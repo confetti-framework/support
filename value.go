@@ -2,6 +2,7 @@ package support
 
 import (
 	"errors"
+	"github.com/spf13/cast"
 	"reflect"
 	"strconv"
 	"strings"
@@ -142,23 +143,13 @@ func (v Value) String() string {
 }
 
 func (v Value) StringE() (result string, err error) {
-	switch v.source.(type) {
-	case nil:
-		result = ""
-	case int:
-		result = strconv.Itoa(v.source.(int))
-	case float32:
-		result = strconv.FormatFloat(float64(v.source.(float32)), 'E', -1, 32)
-	case float64:
-		result = strconv.FormatFloat(v.source.(float64), 'f', -1, 64)
-	case string:
-		result = v.source.(string)
+	switch source := v.source.(type) {
 	case Collection:
-		result, err = v.Collection().First().StringE()
+		result, err = source.First().StringE()
 	case Map:
-		return v.Map().First().StringE()
+		result, err = source.First().StringE()
 	default:
-		err = errors.New("can't convert value to string")
+		result, err = cast.ToStringE(source)
 	}
 
 	if v.error != nil {
@@ -178,21 +169,43 @@ func (v Value) Number() int {
 }
 
 func (v Value) NumberE() (result int, err error) {
-	switch v.source.(type) {
-	case int:
-		result = v.source.(int)
-	case string:
-		stringValue := v.source.(string)
-		if stringValue == "" {
-			result = 0
-		} else {
-			result, err = strconv.Atoi(stringValue)
-		}
+	switch source := v.source.(type) {
 	case Collection:
-		result, err = v.Collection().First().NumberE()
+		result, err = source.First().NumberE()
+	case Map:
+		result, err = source.First().NumberE()
 	default:
-		err = errors.New("can't convert value to number")
+		result, err = cast.ToIntE(source)
 	}
+
+	if v.error != nil {
+		err = v.error
+	}
+
+	return
+}
+
+func (v Value) Float() float64 {
+	values, err := v.FloatE()
+	if err != nil {
+		panic(err)
+	}
+
+	return values
+}
+
+func (v Value) FloatE() (result float64, err error) {
+
+	switch source := v.source.(type) {
+	case Collection:
+		result, err = source.First().FloatE()
+	case Map:
+		result, err = source.First().FloatE()
+	default:
+		result, err = cast.ToFloat64E(source)
+	}
+
+	// todo test map
 
 	if v.error != nil {
 		err = v.error
