@@ -31,10 +31,16 @@ func NewValue(value interface{}) Value {
 	return Value{source: value}
 }
 
-func NewValueE(val interface{}, inputErr interface{}) Value {
+func NewValueE(val interface{}, unknownError interface{}) Value {
 	var err error
-	if e, ok := inputErr.(string); ok {
-		err = errors.New(e)
+
+	switch knownError := unknownError.(type) {
+	case string:
+		err = errors.New(knownError)
+	case error:
+		err = knownError
+	default:
+		panic("can't convert variable in an error (type unknown)")
 	}
 
 	switch val.(type) {
