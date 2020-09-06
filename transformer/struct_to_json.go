@@ -2,21 +2,15 @@ package transformer
 
 import (
 	"encoding/json"
-	"github.com/lanvard/support"
-	"reflect"
 )
 
-type StructToJson struct{}
+type InterfaceToJson struct{}
 
-func (j StructToJson) IsValid(object interface{}) bool {
-	return object == nil || support.Type(object) == reflect.Struct
+func (j InterfaceToJson) IsValid(object interface{}) bool {
+	return true
 }
 
-func (j StructToJson) Transform(object interface{}) string {
-	if !j.IsValid(object) {
-		panic("can not transform to json with an unsupported type")
-	}
-
+func (j InterfaceToJson) Transform(object interface{}) string {
 	result, err := json.Marshal(object)
 	if err != nil {
 		panic(err)
