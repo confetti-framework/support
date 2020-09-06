@@ -12,10 +12,10 @@ func JsonToValue(json string) support.Value {
 }
 
 func ToJson(raw interface{}) (string, error) {
-	switch value := raw.(type) {
+	// switch value := raw.(type) {
 	// case support.Value:
 	// 	return value.StringE()
 
-	}
-
+	// }
+	return "", nil
 }
