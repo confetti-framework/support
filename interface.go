@@ -15,7 +15,7 @@ func Name(element interface{}) string {
 	}
 
 	if Type(element) == reflect.Ptr && element == nil {
-		panic("Can't bind interface. To bind an interface, use the following syntax: (*INTERFACE)(nil)")
+		panic("Nil value found. To bind an interface, use the following syntax: (*INTERFACE)(nil)")
 	}
 
 	return reflect.TypeOf(element).Elem().String()

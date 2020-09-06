@@ -39,8 +39,10 @@ func NewValueE(val interface{}, unknownError interface{}) Value {
 		err = errors.New(knownError)
 	case error:
 		err = knownError
+	case nil:
+		err = nil
 	default:
-		panic("can't convert variable in an error (type unknown)")
+		panic("can't convert variable in an error (type " + Name(knownError) + ")")
 	}
 
 	switch val.(type) {
