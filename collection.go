@@ -38,7 +38,7 @@ func NewCollection(items ...interface{}) Collection {
 	return collection
 }
 
-func (c Collection) Raw() []interface{} {
+func (c Collection) Raw() interface{} {
 	collection, err := c.RawE()
 	if err != nil {
 		panic(err)
@@ -47,7 +47,7 @@ func (c Collection) Raw() []interface{} {
 	return collection
 }
 
-func (c Collection) RawE() ([]interface{}, Errors) {
+func (c Collection) RawE() (interface{}, Errors) {
 	var result []interface{}
 	var err Errors
 
@@ -60,7 +60,7 @@ func (c Collection) RawE() ([]interface{}, Errors) {
 		// Handle errors
 		if multiErr, ok := valErr.(Errors); ok {
 			err = append(err, multiErr...)
-		} else if valErr != nil{
+		} else if valErr != nil {
 			err = append(err, valErr)
 		}
 	}
