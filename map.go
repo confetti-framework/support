@@ -130,7 +130,7 @@ func (m Map) Set(key string, value Value) Map {
 func (m Map) Only(keys ...string) Map {
 	result := Map{}
 	for _, key := range keys {
-		if m.Present(key) {
+		if m.Has(key) {
 			result.Set(key, m.Get(key))
 		}
 	}
@@ -205,9 +205,15 @@ func (m Map) First() Value {
 	return m.Collection().First()
 }
 
-func (m Map) Present(key string) bool {
-	_, present := m[key]
-	return present
+func (m Map) Has(keys ...string) bool {
+	for _, key := range keys {
+		_, present := m[key]
+		if !present {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (m Map) Empty() bool {
