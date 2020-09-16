@@ -221,11 +221,22 @@ func (v Value) FloatE() (result float64, err error) {
 }
 
 func (v Value) Bool() bool {
-	switch v.Raw() {
+	result, err := v.BoolE()
+	if err != nil {
+		panic(err)
+	}
+
+	return result
+}
+
+func (v Value) BoolE() (bool, error) {
+	result, err := v.RawE()
+
+	switch result {
 	case true, 1, "1", "true", "on", "yes":
-		return true
+		return true, err
 	default:
-		return false
+		return false, err
 	}
 }
 

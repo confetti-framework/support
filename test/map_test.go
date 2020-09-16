@@ -19,3 +19,8 @@ func Test_get_all_from_map(t *testing.T) {
 		3,
 	)
 }
+
+// func TestMapOnlyWhenAllKeysArePresent(t *testing.T) {
+// 	data := support.NewMapByString(map[string]string{"username", "password"})
+// 	assert.Equal(t, data, data.Only("username", "password"))
+// }

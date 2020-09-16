@@ -101,7 +101,7 @@ func (m Map) Get(key string) Value {
 
 	value, found := m[currentKey]
 	if !found {
-		return NewValueE(nil, errors.New(key + " not found"))
+		return NewValueE(nil, errors.New(key+" not found"))
 	}
 
 	switch value.Source().(type) {
@@ -126,6 +126,10 @@ func (m Map) Set(key string, value Value) Map {
 
 	return m
 }
+
+// func (m Map) Only(s string, s2 string) (map[]) {
+//
+// }
 
 // Push adds the value to key. It appends to any existing values
 // associated with key. If the value is in collection, push
