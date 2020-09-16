@@ -220,6 +220,15 @@ func (v Value) FloatE() (result float64, err error) {
 	return
 }
 
+func (v Value) Bool() bool {
+	switch v.Raw() {
+	case true, 1, "1", "true", "on", "yes":
+		return true
+	default:
+		return false
+	}
+}
+
 func (v Value) Empty() bool {
 	return v.source == nil || v.source == ""
 }
