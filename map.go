@@ -127,9 +127,25 @@ func (m Map) Set(key string, value Value) Map {
 	return m
 }
 
-// func (m Map) Only(s string, s2 string) (map[]) {
-//
-// }
+func (m Map) Only(keys ...string) Map {
+	result := Map{}
+	for _, key := range keys {
+		if m.Present(key) {
+			result.Set(key, m.Get(key))
+		}
+	}
+
+	return result
+}
+
+func (m Map) Except(keys ...string) Map {
+	result := m.Copy()
+	for _, key := range keys {
+		delete(result, key)
+	}
+
+	return result
+}
 
 // Push adds the value to key. It appends to any existing values
 // associated with key. If the value is in collection, push
@@ -175,8 +191,23 @@ func (m Map) Merge(maps ...Map) Map {
 	return m
 }
 
+// Generates a new struct with the same data as the old struct
+func (m Map) Copy() Map {
+	newMap := Map{}
+	for key, value := range m {
+		newMap[key] = value
+	}
+
+	return newMap
+}
+
 func (m Map) First() Value {
 	return m.Collection().First()
+}
+
+func (m Map) Present(key string) bool {
+	_, present := m[key]
+	return present
 }
 
 func (m Map) Empty() bool {

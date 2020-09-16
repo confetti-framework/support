@@ -20,7 +20,45 @@ func Test_get_all_from_map(t *testing.T) {
 	)
 }
 
-// func TestMapOnlyWhenAllKeysArePresent(t *testing.T) {
-// 	data := support.NewMapByString(map[string]string{"username", "password"})
-// 	assert.Equal(t, data, data.Only("username", "password"))
-// }
+func TestMapOnlyWhenAllKeysArePresent(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.Equal(t, data, data.Only("username", "password"))
+}
+
+func TestMapOnlyWhenLessKeysThanPresent(t *testing.T) {
+	assert.Equal(
+		t,
+		support.NewMapByString(map[string]string{"username": "apple_pear"}),
+		support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"}).Only("username"),
+	)
+}
+
+func TestMapOnlyWhenMoreKeysThanPresent(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.Equal(t, data, data.Only("username", "password", "age"))
+}
+
+func TestMapExceptWhenNoKeysArePresent(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.Equal(t, data, data.Except())
+}
+
+func TestMapExceptWhenLessKeysThanPresent(t *testing.T) {
+	assert.Equal(t,
+		support.NewMapByString(map[string]string{"username": "apple_pear"}),
+		support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"}).Except("password"),
+	)
+}
+
+func TestMapExceptWhenMoreKeysThanPresent(t *testing.T) {
+	assert.Equal(t,
+		support.NewMapByString(map[string]string{"username": "apple_pear"}),
+		support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"}).Except("password", "age"),
+	)
+}
+
+func TestNoReferenceToOldStruct(t *testing.T) {
+	oldStruct := support.NewMapByString(map[string]string{"username": "apple_pear"})
+	_ = oldStruct.Except("username")
+	assert.Equal(t, oldStruct, support.NewMapByString(map[string]string{"username": "apple_pear"}))
+}
