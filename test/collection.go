@@ -6,20 +6,6 @@ import (
 	"testing"
 )
 
-func Test_get_all_from_map(t *testing.T) {
-	values := support.NewMapByUrlValues(map[string][]string{
-		"language": {"Go"},
-		"names":    {"David", "Jona"},
-	})
-
-	value := values.Get("*")
-	assert.Len(
-		t,
-		value.Collection(),
-		3,
-	)
-}
-
 func Test_get_all_from_collection(t *testing.T) {
 	values := support.NewCollection([]string{
 		"Go",
