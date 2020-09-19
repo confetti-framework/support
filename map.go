@@ -227,8 +227,18 @@ func (m Map) Has(keys ...string) bool {
 	return true
 }
 
-func (m Map) HasAny() bool {
-	return true
+func (m Map) HasAny(keys ...string) bool {
+	if len(keys) == 0 {
+		return true
+	}
+
+	for _, key := range keys {
+		if m.Get(key).Error() == nil {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (m Map) Empty() bool {

@@ -85,3 +85,18 @@ func TestMapHasWithNilValue(t *testing.T) {
 	data := support.NewMapByValue(user)
 	assert.True(t, data.Has("user"))
 }
+
+func TestMapHasAnyWithNoKey(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.True(t, data.HasAny())
+}
+
+func TestMapHasAnyWithOneNonPresentKey(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.False(t, data.HasAny("age"))
+}
+
+func TestMapHasAnyWithOnePresentKey(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.True(t, data.HasAny("age", "username"))
+}
