@@ -63,6 +63,11 @@ func TestNoReferenceToOldStruct(t *testing.T) {
 	assert.Equal(t, oldStruct, support.NewMapByString(map[string]string{"username": "apple_pear"}))
 }
 
+func TestMapHasWithNoKey(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear"})
+	assert.True(t, data.Has())
+}
+
 func TestMapHasWithOneKey(t *testing.T) {
 	data := support.NewMapByString(map[string]string{"username": "apple_pear"})
 	assert.True(t, data.Has("username"))
@@ -73,4 +78,10 @@ func TestMapHasWithMultipleKeys(t *testing.T) {
 	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
 	assert.True(t, data.Has("username", "password"))
 	assert.False(t, data.Has("username", "age"))
+}
+
+func TestMapHasWithNilValue(t *testing.T) {
+	user := map[string]support.Value{"user": support.NewValue(nil)}
+	data := support.NewMapByValue(user)
+	assert.True(t, data.Has("user"))
 }

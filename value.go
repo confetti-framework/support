@@ -240,12 +240,12 @@ func (v Value) BoolE() (bool, error) {
 	}
 }
 
-func (v Value) Empty() bool {
-	return v.source == nil || v.source == ""
+func (v Value) Filled() bool {
+	return v.source != nil && v.source != ""
 }
 
-func (v Value) Present() bool {
-	return v.source != nil && v.source != ""
+func (v Value) Empty() bool {
+	return v.source == nil || v.source == ""
 }
 
 // Split slices Value into all substrings separated by separator and returns a slice of

@@ -19,6 +19,18 @@ func NewMap(itemsRange ...map[string]interface{}) Map {
 	return result
 }
 
+func NewMapByValue(itemsRange ...map[string]Value) Map {
+	result := Map{}
+
+	for _, items := range itemsRange {
+		for key, item := range items {
+			result[key] = NewValue(item)
+		}
+	}
+
+	return result
+}
+
 func NewMapByString(itemsRange ...map[string]string) Map {
 	result := Map{}
 
@@ -207,12 +219,15 @@ func (m Map) First() Value {
 
 func (m Map) Has(keys ...string) bool {
 	for _, key := range keys {
-		_, present := m[key]
-		if !present {
+		if m.Get(key).Error() != nil {
 			return false
 		}
 	}
 
+	return true
+}
+
+func (m Map) HasAny() bool {
 	return true
 }
 
