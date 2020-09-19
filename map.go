@@ -219,6 +219,7 @@ func (m Map) First() Value {
 
 func (m Map) Has(keys ...string) bool {
 	for _, key := range keys {
+		// todo don't check for nil error, but for NotFound error
 		if m.Get(key).Error() != nil {
 			return false
 		}
@@ -233,12 +234,27 @@ func (m Map) HasAny(keys ...string) bool {
 	}
 
 	for _, key := range keys {
+		// todo don't check for nil error, but for NotFound error
 		if m.Get(key).Error() == nil {
 			return true
 		}
 	}
 
 	return false
+}
+
+func (m Map) Missing(keys ...string) bool {
+	return !m.Has(keys...)
+}
+
+func (m Map) Filled(keys ...string) bool {
+	for _, key := range keys {
+		if m.Get(key).Empty() {
+			return false
+		}
+	}
+
+	return true
 }
 
 func (m Map) Empty() bool {

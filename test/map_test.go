@@ -96,7 +96,41 @@ func TestMapHasAnyWithOneNonPresentKey(t *testing.T) {
 	assert.False(t, data.HasAny("age"))
 }
 
-func TestMapHasAnyWithOnePresentKey(t *testing.T) {
+func TestMapMissingWithNoKey(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear"})
+	assert.False(t, data.Missing(""))
+}
+func TestMapMissingWithOneKey(t *testing.T) {
 	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.True(t, data.HasAny("age", "username"))
+	assert.False(t, data.Missing("username"))
+}
+
+func TestMapMissingOneKeyMissing(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.True(t, data.Missing("age", "password"))
+}
+
+func TestMapFilledWithNoKey(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear"})
+	assert.True(t, data.Filled())
+}
+
+func TestMapFilledWithOneKey(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.True(t, data.Filled("username"))
+}
+
+func TestMapFilledWithMultipleKeyFilled(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	assert.True(t, data.Filled("username", "password"))
+}
+
+func TestMapFilledWithOneNotFilledButPresent(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear", "password": ""})
+	assert.False(t, data.Filled("username", "password"))
+}
+
+func TestMapFilledWithOneNotPresent(t *testing.T) {
+	data := support.NewMapByString(map[string]string{"username": "apple_pear"})
+	assert.False(t, data.Filled("username", "password"))
 }
