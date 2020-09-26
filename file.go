@@ -36,3 +36,7 @@ func (f File) Content() string {
 	}
 	return buff.String()
 }
+
+func (f File) Name() interface{} {
+	return f.header.Filename
+}
