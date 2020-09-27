@@ -3,6 +3,7 @@ package support
 import (
 	"bytes"
 	"mime/multipart"
+	"strings"
 )
 
 type Files []File
@@ -42,8 +43,11 @@ func (f File) Name() interface{} {
 }
 
 func (f File) Extension() string {
-	if f.Header().Header["Content-Type"][0] == "invalid" {
-		return ""
+	contentType := f.header.Header.Get("Content-Type")
+	contentType = strings.Split(contentType, ";")[0]
+	if extension, ok := mapMimeExtension[contentType]; ok {
+		return extension
 	}
-	return "txt"
+
+	return ""
 }
