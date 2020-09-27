@@ -40,3 +40,10 @@ func (f File) Content() string {
 func (f File) Name() interface{} {
 	return f.header.Filename
 }
+
+func (f File) Extension() string {
+	if f.Header().Header["Content-Type"][0] == "invalid" {
+		return ""
+	}
+	return "txt"
+}
