@@ -1,6 +1,6 @@
 module github.com/lanvard/support
 
-go 1.14
+go 1.15
 
 require (
 	github.com/gabriel-vasile/mimetype v1.1.1
