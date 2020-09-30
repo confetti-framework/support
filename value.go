@@ -90,32 +90,43 @@ func (v Value) Get(key string) Value {
 	}
 
 	currentKey, rest := splitKey(key)
+	nextKey := joinRest(rest)
 
 	// when you request something with an Asterisk, you always develop a collection
 	if currentKey == "*" {
 
 		switch v.source.(type) {
 		case Collection:
-			return v.source.(Collection).Get(joinRest(rest))
+			return v.source.(Collection).Get(nextKey)
 		case Map:
-			return v.source.(Map).Get(joinRest(rest))
+			return v.source.(Map).Get(nextKey)
 		default:
 			return NewValueE(nil, errors.New("*: is not a Collection or Map"))
 		}
 
 	}
 
-	switch v.source.(type) {
+	switch source := v.source.(type) {
 	case Collection:
 		keyInt, err := strconv.Atoi(currentKey)
 		if err != nil {
 			return NewValueE(nil, err)
 		}
-		return v.source.(Collection)[keyInt].Get(joinRest(rest))
+		return v.source.(Collection)[keyInt].Get(nextKey)
 	case Map:
-		return v.source.(Map)[currentKey].Get(joinRest(rest))
+		return v.source.(Map)[currentKey].Get(nextKey)
 	default:
-		return NewValueE(nil, errors.New(currentKey+": is not a Collection or Map"))
+		switch Type(source) {
+		case reflect.Struct:
+			val := reflect.ValueOf(source).FieldByName(key)
+			if val.IsValid() {
+				return NewValue(val.Interface()).Get(nextKey)
+			} else {
+				return NewValueE(nil, errors.New(key+": can't find value"))
+			}
+
+		}
+		return NewValueE(nil, errors.New(currentKey+": is not a struct, Collection or Map"))
 	}
 }
 
