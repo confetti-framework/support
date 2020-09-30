@@ -56,7 +56,7 @@ func TestRawFromValueWithCollection(t *testing.T) {
 }
 
 func TestRawFromMapWithStrings(t *testing.T) {
-	actual := support.NewMapByString(map[string]string{
+	actual := support.NewMap(map[string]string{
 		"chair": "blue",
 		"table": "green",
 	}).Raw()
@@ -67,7 +67,7 @@ func TestRawFromMapWithStrings(t *testing.T) {
 func TestRawFromValueWithCollectionAndMap(t *testing.T) {
 	actual := support.NewValue(
 		support.NewCollection(
-			support.NewMapByString(map[string]string{"key": "door"}),
+			support.NewMap(map[string]string{"key": "door"}),
 		),
 	).Raw()
 

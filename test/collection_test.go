@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_get_all_from_collection(t *testing.T) {
+func TestGetAllFromCollection(t *testing.T) {
 	values := support.NewCollection([]string{
 		"Go",
 		"David",
@@ -21,8 +21,8 @@ func Test_get_all_from_collection(t *testing.T) {
 	)
 }
 
-func Test_get_collection_by_key(t *testing.T) {
-	values := support.NewMapByUrlValues(map[string][]string{
+func TestGetCollectionByKey(t *testing.T) {
+	values := support.NewMap(map[string][]string{
 		"language": {"Go"},
 		"names":    {"David", "Jona"},
 	})

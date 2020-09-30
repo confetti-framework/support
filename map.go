@@ -2,57 +2,22 @@ package support
 
 import (
 	"errors"
-	"net/url"
+	"reflect"
 )
 
 type Map map[string]Value
 
-func NewMap(itemsRange ...map[string]interface{}) Map {
+func NewMap(itemsRange ...interface{}) Map {
 	result := Map{}
 
-	for _, items := range itemsRange {
-		for key, item := range items {
-			result[key] = NewValue(item)
+	for _, rawItems := range itemsRange {
+		v := reflect.ValueOf(rawItems)
+		if v.Kind() != reflect.Map {
+			panic("can't create map from " + v.Kind().String())
 		}
-	}
 
-	return result
-}
-
-func NewMapByValue(itemsRange ...map[string]Value) Map {
-	result := Map{}
-
-	for _, items := range itemsRange {
-		for key, item := range items {
-			result[key] = NewValue(item)
-		}
-	}
-
-	return result
-}
-
-func NewMapByString(itemsRange ...map[string]string) Map {
-	result := Map{}
-
-	for _, items := range itemsRange {
-		for key, item := range items {
-			result[key] = NewValue(item)
-		}
-	}
-
-	return result
-}
-
-func NewMapByUrlValues(itemsRange ...url.Values) Map {
-	result := Map{}
-
-	for _, items := range itemsRange {
-		for key, strings := range items {
-			collection := NewCollection()
-			for _, stringItem := range strings {
-				collection = collection.Push(stringItem)
-			}
-			result[key] = NewValue(collection)
+		for _, key := range v.MapKeys() {
+			result[key.String()] = NewValue(v.MapIndex(key).Interface())
 		}
 	}
 

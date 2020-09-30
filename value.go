@@ -25,7 +25,7 @@ func NewValue(value interface{}) Value {
 	case reflect.Slice, reflect.Array:
 		return NewValue(NewCollection(value))
 	case reflect.Map:
-		return Value{source: NewMap(value.(map[string]interface{}))}
+		return Value{source: NewMap(value)}
 	}
 
 	return Value{source: value}
@@ -118,11 +118,11 @@ func (v Value) Get(key string) Value {
 	default:
 		switch Type(source) {
 		case reflect.Struct:
-			val := reflect.ValueOf(source).FieldByName(key)
+			val := reflect.ValueOf(source).FieldByName(currentKey)
 			if val.IsValid() {
 				return NewValue(val.Interface()).Get(nextKey)
 			} else {
-				return NewValueE(nil, errors.New(key+": can't find value"))
+				return NewValueE(nil, errors.New(currentKey+": can't find value"))
 			}
 
 		}
