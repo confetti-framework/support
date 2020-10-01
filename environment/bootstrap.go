@@ -7,7 +7,8 @@ import (
 	"strings"
 )
 
-func Bootstrap(basePath inter.BasePath) error  {
+// bootstrap .env file
+func Bootstrap(basePath inter.BasePath) error {
 	var file string
 
 	if strings.HasSuffix(os.Args[0], ".test") {
