@@ -1,20 +1,19 @@
-package environment
+package env
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/lanvard/contract/inter"
 	"os"
 	"strings"
 )
 
 // bootstrap .env file
-func Bootstrap(basePath inter.BasePath) error {
+func Bootstrap(envFile, envFileTest string) error {
 	var file string
 
 	if strings.HasSuffix(os.Args[0], ".test") {
-		file = basePath.EnvironmentTestingFile()
+		file = envFile
 	} else {
-		file = basePath.EnvironmentFile()
+		file = envFileTest
 	}
 
 	return godotenv.Load(file)

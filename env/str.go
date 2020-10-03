@@ -1,16 +1,16 @@
-package environment
+package env
 
 import (
 	"os"
 )
 
-func StrEnv(search string) string {
+func Str(search string) string {
 	env, _ := os.LookupEnv(search)
 
 	return env
 }
 
-func StrEnvOr(search string, def string) string {
+func StringOr(search string, def string) string {
 	env, OK := os.LookupEnv(search)
 	if !OK {
 		return def
