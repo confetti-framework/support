@@ -142,13 +142,20 @@ func (v Value) Collection() Collection {
 	}
 }
 
-// A value can contain a Map.
 func (v Value) Map() Map {
+	result, err := v.MapE()
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (v Value) MapE() (Map, error) {
 	switch valueType := v.source.(type) {
 	case Map:
-		return v.source.(Map)
+		return v.source.(Map), nil
 	default:
-		panic("can't create map from reflect.Kind " + strconv.Itoa(int(Type(valueType))))
+		return nil, errors.New("can't create map from reflect.Kind " + strconv.Itoa(int(Type(valueType))))
 	}
 }
 
