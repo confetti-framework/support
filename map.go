@@ -78,21 +78,16 @@ func (m Map) Get(key string) Value {
 
 	value, found := m[currentKey]
 	if !found {
-		return NewValueE(nil, errors.New(key+" not found"))
+		return NewValueE(nil, errors.New("no value found with key '"+currentKey+"'"))
 	}
 
 	switch value.Source().(type) {
 	case Collection:
 		return value.Collection().Get(joinRest(rest))
 	case Map:
-		deeperValue, found := value.Source().(Map)[key]
-		if found {
-			return deeperValue
-		}
-
-		return NewValueE(nil, errors.New("no value found with key "+key))
+		return value.Map().Get(joinRest(rest))
 	default:
-		return value
+		return value.Get(joinRest(rest))
 	}
 }
 

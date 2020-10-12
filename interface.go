@@ -40,8 +40,6 @@ func Type(element interface{}) reflect.Kind {
 		return reflect.Slice
 	case Map:
 		return reflect.Map
-	case string:
-		return reflect.String
 	}
 
 	return reflect.TypeOf(element).Kind()
