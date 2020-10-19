@@ -47,22 +47,14 @@ func (c Collection) Raw() interface{} {
 	return collection
 }
 
-func (c Collection) RawE() (interface{}, Errors) {
+func (c Collection) RawE() (interface{}, error) {
 	var result []interface{}
-	var err Errors
+	var raw interface{}
+	var err error
 
 	for _, value := range c {
-		raw, valErr := value.RawE()
-
-		// Handle value
+		raw, err = value.RawE()
 		result = append(result, raw)
-
-		// Handle errors
-		if multiErr, ok := valErr.(Errors); ok {
-			err = append(err, multiErr...)
-		} else if valErr != nil {
-			err = append(err, valErr)
-		}
 	}
 
 	return result, err

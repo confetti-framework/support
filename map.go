@@ -33,22 +33,16 @@ func (m Map) Raw() interface{} {
 	return result
 }
 
-func (m Map) RawE() (interface{}, Errors) {
+func (m Map) RawE() (interface{}, error) {
 	result := map[string]interface{}{}
-	var err Errors
+	var raw interface{}
+	var err error
 
 	for key, value := range m {
-		raw, valErr := value.RawE()
+		raw, err = value.RawE()
 
 		// Handle value
 		result[key] = raw
-
-		// Handle errors
-		if multiErr, ok := valErr.(Errors); ok {
-			err = append(err, multiErr...)
-		} else if valErr != nil {
-			err = append(err, valErr)
-		}
 	}
 
 	return result, err
