@@ -8,12 +8,22 @@ import (
 type Map map[string]Value
 
 func NewMap(itemsRange ...interface{}) Map {
+	result, err := NewMapE(itemsRange)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func NewMapE(itemsRange ...interface{}) (Map, error) {
+	var err error
 	result := Map{}
 
 	for _, rawItems := range itemsRange {
 		v := reflect.ValueOf(rawItems)
 		if v.Kind() != reflect.Map {
-			panic("can't create map from " + v.Kind().String())
+			err = errors.New("can't create map from " + v.Kind().String())
+			continue
 		}
 
 		for _, key := range v.MapKeys() {
@@ -21,7 +31,7 @@ func NewMap(itemsRange ...interface{}) Map {
 		}
 	}
 
-	return result
+	return result, err
 }
 
 func (m Map) Raw() interface{} {

@@ -9,7 +9,16 @@ import (
 type Collection []Value
 
 func NewCollection(items ...interface{}) Collection {
+	collection, err := NewCollectionE(items)
+	if err != nil {
+		panic(err)
+	}
+	return collection
+}
+
+func NewCollectionE(items ...interface{}) (Collection, error) {
 	collection := Collection{}
+	var err error
 
 	for _, item := range items {
 		if inputCollection, ok := item.(Collection); ok {
@@ -28,14 +37,15 @@ func NewCollection(items ...interface{}) Collection {
 					collection = append(collection, NewValue(value))
 				}
 			} else {
-				panic("Can't convert items to collection")
+				v := reflect.ValueOf(item)
+				err = errors.New("Can't create collection from type " + v.Kind().String())
 			}
 		default:
 			collection = append(collection, NewValue(item))
 		}
 	}
 
-	return collection
+	return collection, err
 }
 
 func (c Collection) Raw() interface{} {

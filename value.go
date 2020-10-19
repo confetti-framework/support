@@ -23,7 +23,7 @@ func NewValue(value interface{}) Value {
 
 	switch Type(value) {
 	case reflect.Slice, reflect.Array:
-		return NewValue(NewCollection(value))
+		return NewValueE(NewCollectionE(value))
 	case reflect.Map:
 		return Value{source: NewMap(value)}
 	}
