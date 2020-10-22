@@ -4,7 +4,6 @@ go 1.15
 
 require (
 	github.com/joho/godotenv v1.3.0
-	github.com/lanvard/contract v0.0.0
 	github.com/lanvard/syslog v0.0.0-20201006215111-98d4d91dbaa8
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cast v1.3.1

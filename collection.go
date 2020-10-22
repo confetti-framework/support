@@ -9,7 +9,7 @@ import (
 type Collection []Value
 
 func NewCollection(items ...interface{}) Collection {
-	collection, err := NewCollectionE(items)
+	collection, err := NewCollectionE(items...)
 	if err != nil {
 		panic(err)
 	}

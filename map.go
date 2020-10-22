@@ -8,7 +8,7 @@ import (
 type Map map[string]Value
 
 func NewMap(itemsRange ...interface{}) Map {
-	result, err := NewMapE(itemsRange)
+	result, err := NewMapE(itemsRange...)
 	if err != nil {
 		panic(err)
 	}
