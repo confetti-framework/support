@@ -1,7 +1,7 @@
 package value
 
 import (
-	"errors"
+	"github.com/lanvard/errors"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	"testing"

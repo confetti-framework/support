@@ -1,7 +1,6 @@
 package test
 
 import (
-	"errors"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -77,7 +76,7 @@ func TestRawFromValueWithCollectionAndMap(t *testing.T) {
 func TestRawFromValueWithError(t *testing.T) {
 	raw, err := support.NewValueE(100, "this is an error").RawE()
 	assert.Equal(t, 100, raw)
-	assert.Equal(t, errors.New("this is an error"), err)
+	assert.EqualError(t, err, "this is an error")
 }
 
 func TestRawFromValueWithoutError(t *testing.T) {
@@ -95,14 +94,7 @@ func TestRawFromValueAndCollectionWithMultipleErrors(t *testing.T) {
 	).RawE()
 
 	assert.Equal(t, []interface{}{100, 100}, raw)
-	assert.Equal(
-		t,
-		support.Errors{
-			errors.New("this the first error"),
-			errors.New("this is the second error"),
-		},
-		errs,
-	)
+	assert.EqualError(t, errs, "this is the second error")
 }
 
 func TestRawFromValueAndMapWithMultipleErrors(t *testing.T) {
@@ -114,11 +106,7 @@ func TestRawFromValueAndMapWithMultipleErrors(t *testing.T) {
 	).RawE()
 
 	assert.Equal(t, map[string]interface{}{"key1": 100, "key2": 150}, raw)
-	assert.Len(
-		t,
-		errs,
-		2,
-	)
+	assert.EqualError(t, errs, "this is the second error")
 }
 
 func TestRawValuePanic(t *testing.T) {

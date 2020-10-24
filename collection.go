@@ -1,7 +1,7 @@
 package support
 
 import (
-	"errors"
+	"github.com/lanvard/errors"
 	"reflect"
 	"strconv"
 )
