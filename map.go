@@ -1,7 +1,7 @@
 package support
 
 import (
-	"github.com/pkg/errors"
+	"github.com/lanvard/errors"
 	"reflect"
 )
 
