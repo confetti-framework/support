@@ -29,7 +29,7 @@ func (f File) Close() error {
 	return f.source.Close()
 }
 
-func (f File) Body() string {
+func (f File) GetBody() string {
 	var buff bytes.Buffer
 	_, err := buff.ReadFrom(f.source)
 	if err != nil {
