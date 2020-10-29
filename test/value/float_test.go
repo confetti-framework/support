@@ -47,7 +47,7 @@ func TestFloatFromString(t *testing.T) {
 	result, err := value.FloatE()
 
 	assert.Equal(t, 1.5123, result)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 }
 
 func TestFloatFromDifferentIntTypes(t *testing.T) {

@@ -82,7 +82,7 @@ func TestRawFromValueWithError(t *testing.T) {
 func TestRawFromValueWithoutError(t *testing.T) {
 	raw, err := support.NewValueE(100, nil).RawE()
 	assert.Equal(t, 100, raw)
-	assert.Nil(t, err)
+	assert.NoError(t, err)
 }
 
 func TestRawFromValueAndCollectionWithMultipleErrors(t *testing.T) {
