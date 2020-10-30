@@ -6,15 +6,20 @@ import (
 	"strings"
 )
 
+func init() {
+	Bootstrap()
+}
+
 // bootstrap .env file
-func Bootstrap(envFile, envFileTest string) error {
+func Bootstrap() {
 	var file string
+	root, _ := os.Getwd()
 
 	if strings.HasSuffix(os.Args[0], ".test") {
-		file = envFile
+		file = root + "/.env.testing"
 	} else {
-		file = envFileTest
+		file = root + "/.env"
 	}
 
-	return godotenv.Load(file)
+	_ = godotenv.Load(file)
 }

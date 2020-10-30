@@ -6,8 +6,8 @@ import (
 )
 
 func Bool(search string) bool {
-	env, OK := os.LookupEnv(search)
-	if !OK {
+	env, ok := os.LookupEnv(search)
+	if !ok {
 		panic("Environment '" + search + "' not found")
 	}
 
@@ -15,8 +15,8 @@ func Bool(search string) bool {
 }
 
 func BoolOr(search string, def bool) bool {
-	env, OK := os.LookupEnv(search)
-	if !OK {
+	env, ok := os.LookupEnv(search)
+	if !ok {
 		return def
 	}
 

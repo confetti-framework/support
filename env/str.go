@@ -11,8 +11,8 @@ func Str(search string) string {
 }
 
 func StringOr(search string, def string) string {
-	env, OK := os.LookupEnv(search)
-	if !OK {
+	env, ok := os.LookupEnv(search)
+	if !ok {
 		return def
 	}
 

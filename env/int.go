@@ -6,8 +6,8 @@ import (
 )
 
 func Int(search string) int {
-	env, OK := os.LookupEnv(search)
-	if !OK {
+	env, ok := os.LookupEnv(search)
+	if !ok {
 		panic("env " + search + " not found")
 	}
 
@@ -15,8 +15,8 @@ func Int(search string) int {
 }
 
 func IntOr(search string, def int) int {
-	env, OK := os.LookupEnv(search)
-	if !OK {
+	env, ok := os.LookupEnv(search)
+	if !ok {
 		return def
 	}
 
