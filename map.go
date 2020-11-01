@@ -82,7 +82,11 @@ func (m Map) Get(key string) Value {
 
 	value, found := m[currentKey]
 	if !found {
-		return NewValueE(nil, errors.New("no value found with key '"+currentKey+"'"))
+		info := ""
+		if currentKey != key {
+			info = " ('" + key + "')"
+		}
+		return NewValueE(nil, errors.New("no value found with key '"+currentKey+"'"+info))
 	}
 
 	switch value.Source().(type) {
