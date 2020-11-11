@@ -7,54 +7,54 @@ import (
 	"testing"
 )
 
-func TestRawFromEmptyString(t *testing.T) {
+func Test_raw_from_empty_string(t *testing.T) {
 	assert.Equal(t, "", support.NewValue("").Raw())
 }
 
-func TestRawFromNilString(t *testing.T) {
+func Test_raw_from_nil_string(t *testing.T) {
 	assert.Equal(t, nil, support.NewValue(nil).Raw())
 }
 
-func TestRawFromString(t *testing.T) {
+func Test_raw_from_string(t *testing.T) {
 	assert.Equal(t, "flour", support.NewValue("flour").Raw())
 }
 
-func TestRawFromBool(t *testing.T) {
+func Test_raw_from_bool(t *testing.T) {
 	assert.Equal(t, true, support.NewValue(true).Raw())
 	assert.Equal(t, false, support.NewValue(false).Raw())
 }
 
-func TestRawFromNumber(t *testing.T) {
+func Test_raw_from_number(t *testing.T) {
 	assert.Equal(t, 100, support.NewValue(100).Raw())
 	assert.Equal(t, -100, support.NewValue(-100).Raw())
 }
 
-func TestRawFromFloat(t *testing.T) {
+func Test_raw_from_float(t *testing.T) {
 	assert.Equal(t, 0.1, support.NewValue(0.1).Raw())
 }
 
-func TestRawFromCollectionWithOneString(t *testing.T) {
+func Test_raw_from_collection_with_one_string(t *testing.T) {
 	assert.Equal(t, []interface{}{"door"}, support.NewCollection("door").Raw())
 }
 
-func TestRawFromCollectionWithThoStrings(t *testing.T) {
+func Test_raw_from_collection_with_tho_strings(t *testing.T) {
 	assert.Equal(t, []interface{}{"foo", "bar"}, support.NewCollection("foo", "bar").Raw())
 }
 
-func TestRawFromCollectionWithThoNumbers(t *testing.T) {
+func Test_raw_from_collection_with_tho_numbers(t *testing.T) {
 	assert.Equal(t, []interface{}{12, 14}, support.NewCollection(12, 14).Raw())
 }
 
-func TestRawFromCollectionWithThoFloat(t *testing.T) {
+func Test_raw_from_collection_with_tho_float(t *testing.T) {
 	assert.Equal(t, []interface{}{1.5, 0.4}, support.NewCollection(1.5, 0.4).Raw())
 }
 
-func TestRawFromValueWithCollection(t *testing.T) {
+func Test_raw_from_value_with_collection(t *testing.T) {
 	actual := support.NewValue(support.NewCollection("door")).Raw()
 	assert.Equal(t, []interface{}{"door"}, actual)
 }
 
-func TestRawFromMapWithStrings(t *testing.T) {
+func Test_raw_from_map_with_strings(t *testing.T) {
 	actual := support.NewMap(map[string]string{
 		"chair": "blue",
 		"table": "green",
@@ -63,7 +63,7 @@ func TestRawFromMapWithStrings(t *testing.T) {
 	assert.Equal(t, map[string]interface{}{"chair": "blue", "table": "green"}, actual)
 }
 
-func TestRawFromValueWithCollectionAndMap(t *testing.T) {
+func Test_raw_from_value_with_collection_and_map(t *testing.T) {
 	actual := support.NewValue(
 		support.NewCollection(
 			support.NewMap(map[string]string{"key": "door"}),
@@ -73,19 +73,19 @@ func TestRawFromValueWithCollectionAndMap(t *testing.T) {
 	assert.Equal(t, []interface{}{map[string]interface{}{"key": "door"}}, actual)
 }
 
-func TestRawFromValueWithError(t *testing.T) {
+func Test_raw_from_value_with_error(t *testing.T) {
 	raw, err := support.NewValueE(100, "this is an error").RawE()
 	assert.Equal(t, 100, raw)
 	assert.EqualError(t, err, "this is an error")
 }
 
-func TestRawFromValueWithoutError(t *testing.T) {
+func Test_raw_from_value_without_error(t *testing.T) {
 	raw, err := support.NewValueE(100, nil).RawE()
 	assert.Equal(t, 100, raw)
 	assert.NoError(t, err)
 }
 
-func TestRawFromValueAndCollectionWithMultipleErrors(t *testing.T) {
+func Test_raw_from_value_and_collection_with_multiple_errors(t *testing.T) {
 	raw, errs := support.NewValue(
 		support.NewCollection(
 			support.NewValueE(100, "this the first error"),
@@ -97,7 +97,7 @@ func TestRawFromValueAndCollectionWithMultipleErrors(t *testing.T) {
 	assert.EqualError(t, errs, "this is the second error")
 }
 
-func TestRawFromValueAndMapWithMultipleErrors(t *testing.T) {
+func Test_raw_from_value_and_map_with_multiple_errors(t *testing.T) {
 	raw, errs := support.NewValue(
 		support.NewMap(map[string]interface{}{
 			"key1": support.NewValueE(100, "this the first error"),
@@ -109,7 +109,7 @@ func TestRawFromValueAndMapWithMultipleErrors(t *testing.T) {
 	assert.EqualError(t, errs, "this is the second error")
 }
 
-func TestRawValuePanic(t *testing.T) {
+func Test_raw_value_panic(t *testing.T) {
 	value := support.NewValueE(nil, "an error")
 
 	action := func() {
@@ -119,7 +119,7 @@ func TestRawValuePanic(t *testing.T) {
 	require.PanicsWithError(t, "an error", action)
 }
 
-func TestRawValueWithValuePanic(t *testing.T) {
+func Test_raw_value_with_value_panic(t *testing.T) {
 	value := support.NewValue(support.NewValueE(nil, "an error"))
 
 	action := func() {
@@ -129,7 +129,7 @@ func TestRawValueWithValuePanic(t *testing.T) {
 	require.PanicsWithError(t, "an error", action)
 }
 
-func TestRawCollectionPanic(t *testing.T) {
+func Test_raw_collection_panic(t *testing.T) {
 	value := support.NewCollection(support.NewValueE(nil, "an error"))
 
 	action := func() {
@@ -139,7 +139,7 @@ func TestRawCollectionPanic(t *testing.T) {
 	require.PanicsWithError(t, "an error", action)
 }
 
-func TestRawMapPanic(t *testing.T) {
+func Test_raw_map_panic(t *testing.T) {
 	value := support.NewMap(map[string]interface{}{
 		"key": support.NewValueE(nil, "an error"),
 	})

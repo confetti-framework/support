@@ -6,12 +6,12 @@ import (
 	"testing"
 )
 
-func TestUpperFirstWithEmptyString(t *testing.T) {
+func Test_upper_first_with_empty_string(t *testing.T) {
 	result := str.UpperFirst("")
 	assert.Equal(t, "", result)
 }
 
-func TestUpperFirstWithMultipleWords(t *testing.T) {
+func Test_upper_first_with_multiple_words(t *testing.T) {
 	result := str.UpperFirst("a horse is happy")
 	assert.Equal(t, "A horse is happy", result)
 }
