@@ -2,7 +2,7 @@ package value
 
 import (
 	"github.com/lanvard/support"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -11,8 +11,8 @@ func Test_float_from_empty_string(t *testing.T) {
 
 	result, err := value.FloatE()
 
-	assert.Equal(t, 0.0, result)
-	assert.Error(t, err, "unable to cast \"\" of type string to float64")
+	require.Equal(t, 0.0, result)
+	require.Error(t, err, "unable to cast \"\" of type string to float64")
 }
 
 func Test_float_from_words(t *testing.T) {
@@ -20,8 +20,8 @@ func Test_float_from_words(t *testing.T) {
 
 	result, err := value.FloatE()
 
-	assert.Equal(t, 0.0, result)
-	assert.EqualError(t, err, "unable to cast \"four\" of type string to float64")
+	require.Equal(t, 0.0, result)
+	require.EqualError(t, err, "unable to cast \"four\" of type string to float64")
 }
 
 func Test_float_from_long_number(t *testing.T) {
@@ -35,10 +35,10 @@ func Test_float_from_long_number(t *testing.T) {
 
 	result, err := value.FloatE()
 
-	assert.Equal(t, 0.0, result)
-	assert.NotNil(t, err)
-	assert.Contains(t, err.Error(), "unable to cast \"1234")
-	assert.Contains(t, err.Error(), "475679\" of type string to float64")
+	require.Equal(t, 0.0, result)
+	require.NotNil(t, err)
+	require.Contains(t, err.Error(), "unable to cast \"1234")
+	require.Contains(t, err.Error(), "475679\" of type string to float64")
 }
 
 func Test_float_from_string(t *testing.T) {
@@ -46,45 +46,45 @@ func Test_float_from_string(t *testing.T) {
 
 	result, err := value.FloatE()
 
-	assert.Equal(t, 1.5123, result)
-	assert.NoError(t, err)
+	require.Equal(t, 1.5123, result)
+	require.NoError(t, err)
 }
 
 func Test_float_from_different_int_types(t *testing.T) {
 	var result float64
 
 	result, _ = support.NewValue(312).FloatE()
-	assert.Equal(t, float64(312), result)
+	require.Equal(t, float64(312), result)
 
 	result, _ = support.NewValue(int8(2)).FloatE()
-	assert.Equal(t, float64(2), result)
+	require.Equal(t, float64(2), result)
 
 	result, _ = support.NewValue(int16(2)).FloatE()
-	assert.Equal(t, float64(2), result)
+	require.Equal(t, float64(2), result)
 }
 
 func Test_first_float_from_collection(t *testing.T) {
 	result := support.NewValue(support.NewCollection(12.12)).Float()
 
-	assert.Equal(t, 12.12, result)
+	require.Equal(t, 12.12, result)
 }
 
 func Test_first_float_from_map(t *testing.T) {
 	input := support.NewMap(map[string]interface{}{"total": 12.12})
 	result := support.NewValue(input).Float()
 
-	assert.Equal(t, 12.12, result)
+	require.Equal(t, 12.12, result)
 }
 
 func Test_float_not_panic_without_error_receiver(t *testing.T) {
-	assert.NotPanics(t, func() {
+	require.NotPanics(t, func() {
 		support.NewValueE(123, nil).Float()
 	})
-	assert.Equal(t, float64(123), support.NewValueE(123, nil).Float())
+	require.Equal(t, float64(123), support.NewValueE(123, nil).Float())
 }
 
 func Test_float_panic_without_error_receiver(t *testing.T) {
-	assert.PanicsWithError(t, "error_message", func() {
+	require.PanicsWithError(t, "error_message", func() {
 		support.NewValueE("test", "error_message").Float()
 	})
 }

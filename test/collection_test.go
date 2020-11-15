@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/lanvard/support"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -14,7 +14,7 @@ func Test_get_all_from_collection(t *testing.T) {
 	})
 
 	value := values.Get("*")
-	assert.Len(
+	require.Len(
 		t,
 		value.Collection(),
 		3,
@@ -28,10 +28,10 @@ func Test_get_collection_by_key(t *testing.T) {
 	})
 
 	languages := values.Get("language.*")
-	assert.Equal(t, "Go", languages.Collection().First().String())
+	require.Equal(t, "Go", languages.Collection().First().String())
 
 	names := values.Get("names.*")
-	assert.Equal(
+	require.Equal(
 		t,
 		support.NewCollection([]string{"David", "Jona"}),
 		names.Collection(),

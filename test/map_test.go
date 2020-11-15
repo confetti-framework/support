@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/lanvard/support"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -13,7 +13,7 @@ func Test_get_all_from_map(t *testing.T) {
 	})
 
 	value := values.Get("*")
-	assert.Len(
+	require.Len(
 		t,
 		value.Collection(),
 		3,
@@ -22,11 +22,11 @@ func Test_get_all_from_map(t *testing.T) {
 
 func Test_map_only_when_all_keys_are_present(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.Equal(t, data, data.Only("username", "password"))
+	require.Equal(t, data, data.Only("username", "password"))
 }
 
 func Test_map_only_when_less_keys_than_present(t *testing.T) {
-	assert.Equal(
+	require.Equal(
 		t,
 		support.NewMap(map[string]string{"username": "apple_pear"}),
 		support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"}).Only("username"),
@@ -35,23 +35,23 @@ func Test_map_only_when_less_keys_than_present(t *testing.T) {
 
 func Test_map_only_when_more_keys_than_present(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.Equal(t, data, data.Only("username", "password", "age"))
+	require.Equal(t, data, data.Only("username", "password", "age"))
 }
 
 func Test_map_except_when_no_keys_are_present(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.Equal(t, data, data.Except())
+	require.Equal(t, data, data.Except())
 }
 
 func Test_map_except_when_less_keys_than_present(t *testing.T) {
-	assert.Equal(t,
+	require.Equal(t,
 		support.NewMap(map[string]string{"username": "apple_pear"}),
 		support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"}).Except("password"),
 	)
 }
 
 func Test_map_except_when_more_keys_than_present(t *testing.T) {
-	assert.Equal(t,
+	require.Equal(t,
 		support.NewMap(map[string]string{"username": "apple_pear"}),
 		support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"}).Except("password", "age"),
 	)
@@ -60,77 +60,77 @@ func Test_map_except_when_more_keys_than_present(t *testing.T) {
 func Test_no_reference_to_old_struct(t *testing.T) {
 	oldStruct := support.NewMap(map[string]string{"username": "apple_pear"})
 	_ = oldStruct.Except("username")
-	assert.Equal(t, oldStruct, support.NewMap(map[string]string{"username": "apple_pear"}))
+	require.Equal(t, oldStruct, support.NewMap(map[string]string{"username": "apple_pear"}))
 }
 
 func Test_map_has_with_no_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear"})
-	assert.True(t, data.Has())
+	require.True(t, data.Has())
 }
 
 func Test_map_has_with_one_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear"})
-	assert.True(t, data.Has("username"))
-	assert.False(t, data.Has("age"))
+	require.True(t, data.Has("username"))
+	require.False(t, data.Has("age"))
 }
 
 func Test_map_has_with_multiple_keys(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.True(t, data.Has("username", "password"))
-	assert.False(t, data.Has("username", "age"))
+	require.True(t, data.Has("username", "password"))
+	require.False(t, data.Has("username", "age"))
 }
 
 func Test_map_has_with_nil_value(t *testing.T) {
 	user := map[string]support.Value{"user": support.NewValue(nil)}
 	data := support.NewMap(user)
-	assert.True(t, data.Has("user"))
+	require.True(t, data.Has("user"))
 }
 
 func Test_map_has_any_with_no_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.True(t, data.HasAny())
+	require.True(t, data.HasAny())
 }
 
 func Test_map_has_any_with_one_non_present_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.False(t, data.HasAny("age"))
+	require.False(t, data.HasAny("age"))
 }
 
 func Test_map_missing_with_no_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear"})
-	assert.False(t, data.Missing(""))
+	require.False(t, data.Missing(""))
 }
 func Test_map_missing_with_one_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.False(t, data.Missing("username"))
+	require.False(t, data.Missing("username"))
 }
 
 func Test_map_missing_one_key_missing(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.True(t, data.Missing("age", "password"))
+	require.True(t, data.Missing("age", "password"))
 }
 
 func Test_map_filled_with_no_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear"})
-	assert.True(t, data.Filled())
+	require.True(t, data.Filled())
 }
 
 func Test_map_filled_with_one_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.True(t, data.Filled("username"))
+	require.True(t, data.Filled("username"))
 }
 
 func Test_map_filled_with_multiple_key_filled(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
-	assert.True(t, data.Filled("username", "password"))
+	require.True(t, data.Filled("username", "password"))
 }
 
 func Test_map_filled_with_one_not_filled_but_present(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": ""})
-	assert.False(t, data.Filled("username", "password"))
+	require.False(t, data.Filled("username", "password"))
 }
 
 func Test_map_filled_with_one_not_present(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear"})
-	assert.False(t, data.Filled("username", "password"))
+	require.False(t, data.Filled("username", "password"))
 }

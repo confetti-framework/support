@@ -1,5 +1,7 @@
 package support
 
+import "strings"
+
 var mapMimeExtension = map[string]string{
 	"application/x-xz":            ".xz",
 	"application/gzip":            ".gz",
@@ -42,6 +44,7 @@ var mapMimeExtension = map[string]string{
 	"text/x-tcl":                           ".tcl",
 	"text/vcard":                           ".vcf",
 	"text/calendar":                        ".ics",
+	"text/markdown":                        ".md",
 	"image/svg+xml":                        ".svg",
 	"application/rss+xml":                  ".rss",
 	"application/atom+xml":                 ".atom",
@@ -143,4 +146,18 @@ var mapMimeExtension = map[string]string{
 	"application/lzip":                                         ".lz",
 	"application/x-bittorrent":                                 ".torrent",
 	"application/x-cpio":                                       ".cpio",
+}
+
+func MimeByExtension(filename string) (string, bool) {
+	if filename == "" {
+		return "", false
+	}
+	parts := strings.Split(filename, ".")
+	inputExtension := "." + parts[len(parts)-1]
+	for mime, extension := range mapMimeExtension {
+		if extension == inputExtension {
+			return mime, true
+		}
+	}
+	return "", false
 }
