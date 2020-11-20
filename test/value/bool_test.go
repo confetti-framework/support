@@ -1,7 +1,6 @@
 package value
 
 import (
-	"github.com/lanvard/errors"
 	"github.com/lanvard/support"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -43,22 +42,14 @@ func Test_bool_true_from_string_yes(t *testing.T) {
 	require.True(t, support.NewValue("yes").Bool())
 }
 
-func Test_bool_true_with_error_should_panic(t *testing.T) {
-	require.PanicsWithError(t, "the error", func() {
-		support.NewValueE("yes", errors.New("the error")).Bool()
-	})
-}
-
-func Test_bool_with_false_and_error(t *testing.T) {
-	value, err := support.NewValueE(false, errors.New("the error")).BoolE()
+func Test_bool_with_false(t *testing.T) {
+	value := support.NewValue(false).Bool()
 
 	require.False(t, value)
-	require.EqualError(t, err, "the error")
 }
 
-func Test_bool_with_true_and_error(t *testing.T) {
-	value, err := support.NewValueE(true, errors.New("the error")).BoolE()
+func Test_bool_with_true(t *testing.T) {
+	value := support.NewValue(true).Bool()
 
 	require.True(t, value)
-	require.EqualError(t, err, "the error")
 }

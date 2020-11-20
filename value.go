@@ -10,47 +10,34 @@ import (
 
 type Value struct {
 	source interface{}
-	error  error
 }
 
-func NewValue(value interface{}) Value {
-	switch value.(type) {
-	case Collection, Map:
-		return Value{source: value}
-	case Value:
-		return value.(Value)
+func NewValue(val interface{}) Value {
+	result, err := NewValueE(val)
+	if err != nil {
+		panic(err)
 	}
-
-	switch Type(value) {
-	case reflect.Slice, reflect.Array:
-		return NewValueE(NewCollectionE(value))
-	case reflect.Map:
-		return NewValueE(NewMapE(value))
-	}
-
-	return Value{source: value}
+	return result
 }
 
-func NewValueE(val interface{}, unknownError interface{}) Value {
-	var err error
-
-	switch knownError := unknownError.(type) {
-	case string:
-		err = errors.New(knownError)
-	case error:
-		err = knownError
-	case nil:
-		err = nil
-	default:
-		panic("can't convert variable in an error (type " + Name(knownError) + ")")
-	}
-
+func NewValueE(val interface{}) (Value, error) {
 	switch val.(type) {
+	case Collection, Map:
+		return Value{val}, nil
 	case Value:
-		return Value{source: val.(Value).source, error: err}
-	default:
-		return Value{source: val, error: err}
+		return val.(Value), nil
 	}
+
+	switch Type(val) {
+	case reflect.Slice, reflect.Array:
+		result := NewCollection(val)
+		return Value{result}, nil
+	case reflect.Map:
+		result, err := NewMapE(val)
+		return Value{result}, err
+	}
+
+	return Value{val}, nil
 }
 
 func (v Value) Source() interface{} {
@@ -58,35 +45,30 @@ func (v Value) Source() interface{} {
 }
 
 func (v Value) Raw() interface{} {
-	value, err := v.RawE()
-	if err != nil && err.Error() != "" {
-		panic(err)
-	}
-
-	return value
-}
-
-func (v Value) RawE() (interface{}, error) {
 	if result, ok := v.source.(Value); ok {
-		return result.RawE()
+		return result.Raw()
 	}
 	if result, ok := v.source.(Collection); ok {
-		return result.RawE()
+		return result.Raw()
 	}
 	if result, ok := v.source.(Map); ok {
-		return result.RawE()
+		return result.Raw()
 	}
 
-	return v.source, v.error
-}
-
-func (v Value) Error() error {
-	return v.error
+	return v.source
 }
 
 func (v Value) Get(key string) Value {
-	if key == "" || v.Error() != nil {
-		return v
+	result, err := v.GetE(key)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (v Value) GetE(key string) (Value, error) {
+	if key == "" {
+		return v, nil
 	}
 
 	currentKey, rest := splitKey(key)
@@ -97,11 +79,11 @@ func (v Value) Get(key string) Value {
 
 		switch v.source.(type) {
 		case Collection:
-			return v.source.(Collection).Get(nextKey)
+			return v.source.(Collection).GetE(nextKey)
 		case Map:
-			return v.source.(Map).Get(nextKey)
+			return v.source.(Map).GetE(nextKey)
 		default:
-			return NewValueE(nil, errors.New("*: is not a Collection or Map"))
+			return Value{}, errors.New("*: is not a Collection or Map")
 		}
 
 	}
@@ -110,23 +92,34 @@ func (v Value) Get(key string) Value {
 	case Collection:
 		keyInt, err := strconv.Atoi(currentKey)
 		if err != nil {
-			return NewValueE(nil, err)
+			return Value{}, err
 		}
-		return v.source.(Collection)[keyInt].Get(nextKey)
+		collection := v.source.(Collection)
+
+		// !todo:
+
+		// if len(collection) > nextKey {
+		// 	return Value{}, CanNotFoundValueInMapError.Wrap("key '%s' (%s)", currentKey, key)
+		// }
+		return collection[keyInt].GetE(nextKey)
 	case Map:
-		return v.source.(Map)[currentKey].Get(nextKey)
+		value, ok := v.source.(Map)[currentKey]
+		if !ok {
+			return value, CanNotFoundValueError.Wrap("key '%s'%s", currentKey, getKeyInfo(key, currentKey))
+		}
+		return value.GetE(nextKey)
 	default:
 		switch Type(source) {
 		case reflect.Struct:
 			val := reflect.ValueOf(source).FieldByName(currentKey)
 			if val.IsValid() {
-				return NewValue(val.Interface()).Get(nextKey)
+				return NewValue(val.Interface()).GetE(nextKey)
 			} else {
-				return NewValueE(nil, errors.New(currentKey+": can't find value"))
+				return Value{}, errors.New(currentKey + ": can't find value")
 			}
 
 		}
-		return NewValueE(nil, errors.New(currentKey+": is not a struct, Collection or Map"))
+		return Value{}, errors.New(currentKey + ": is not a struct, Collection or Map")
 	}
 }
 
@@ -168,7 +161,10 @@ func (v Value) String() string {
 	return result
 }
 
-func (v Value) StringE() (result string, err error) {
+func (v Value) StringE() (string, error) {
+	var result string
+	var err error
+
 	switch source := v.source.(type) {
 	case Collection:
 		result, err = source.First().StringE()
@@ -178,11 +174,7 @@ func (v Value) StringE() (result string, err error) {
 		result, err = cast.ToStringE(source)
 	}
 
-	if v.error != nil {
-		err = v.error
-	}
-
-	return
+	return result, err
 }
 
 func (v Value) Number() int {
@@ -194,7 +186,10 @@ func (v Value) Number() int {
 	return values
 }
 
-func (v Value) NumberE() (result int, err error) {
+func (v Value) NumberE() (int, error) {
+	var result int
+	var err error
+
 	switch source := v.source.(type) {
 	case Collection:
 		result, err = source.First().NumberE()
@@ -204,11 +199,7 @@ func (v Value) NumberE() (result int, err error) {
 		result, err = cast.ToIntE(source)
 	}
 
-	if v.error != nil {
-		err = v.error
-	}
-
-	return
+	return result, err
 }
 
 func (v Value) Float() float64 {
@@ -220,7 +211,9 @@ func (v Value) Float() float64 {
 	return values
 }
 
-func (v Value) FloatE() (result float64, err error) {
+func (v Value) FloatE() (float64, error) {
+	var result float64
+	var err error
 
 	switch source := v.source.(type) {
 	case Collection:
@@ -231,30 +224,15 @@ func (v Value) FloatE() (result float64, err error) {
 		result, err = cast.ToFloat64E(source)
 	}
 
-	if v.error != nil {
-		err = v.error
-	}
-
-	return
+	return result, err
 }
 
 func (v Value) Bool() bool {
-	result, err := v.BoolE()
-	if err != nil {
-		panic(err)
-	}
-
-	return result
-}
-
-func (v Value) BoolE() (bool, error) {
-	result, err := v.RawE()
-
-	switch result {
+	switch v.source {
 	case true, 1, "1", "true", "on", "yes":
-		return true, err
+		return true
 	default:
-		return false, err
+		return false
 	}
 }
 

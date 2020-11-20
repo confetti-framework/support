@@ -20,10 +20,5 @@ func BoolOr(search string, def bool) bool {
 		return def
 	}
 
-	result, err := support.NewValue(env).BoolE()
-	if err != nil {
-		return def
-	}
-
-	return result
+	return support.NewValue(env).Bool()
 }

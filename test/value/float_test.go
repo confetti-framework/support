@@ -78,13 +78,7 @@ func Test_first_float_from_map(t *testing.T) {
 
 func Test_float_not_panic_without_error_receiver(t *testing.T) {
 	require.NotPanics(t, func() {
-		support.NewValueE(123, nil).Float()
+		support.NewValue(123).Float()
 	})
-	require.Equal(t, float64(123), support.NewValueE(123, nil).Float())
-}
-
-func Test_float_panic_without_error_receiver(t *testing.T) {
-	require.PanicsWithError(t, "error_message", func() {
-		support.NewValueE("test", "error_message").Float()
-	})
+	require.Equal(t, float64(123), support.NewValue(123).Float())
 }

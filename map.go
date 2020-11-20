@@ -1,7 +1,6 @@
 package support
 
 import (
-	"github.com/lanvard/errors"
 	"reflect"
 )
 
@@ -22,12 +21,13 @@ func NewMapE(itemsRange ...interface{}) (Map, error) {
 	for _, rawItems := range itemsRange {
 		v := reflect.ValueOf(rawItems)
 		if v.Kind() != reflect.Map {
-			err = errors.New("can't create map from " + v.Kind().String())
+			err = CanNotCreateMapError.Wrap("type %s", v.Kind().String())
 			continue
 		}
 
 		for _, key := range v.MapKeys() {
-			result[key.String()] = NewValue(v.MapIndex(key).Interface())
+			value := v.MapIndex(key).Interface()
+			result[key.String()] = NewValue(value)
 		}
 	}
 
@@ -35,68 +35,67 @@ func NewMapE(itemsRange ...interface{}) (Map, error) {
 }
 
 func (m Map) Raw() interface{} {
-	result, err := m.RawE()
-	if err != nil {
-		panic(err)
+	result := map[string]interface{}{}
+
+	for key, value := range m {
+		// Handle value
+		result[key] = value.Raw()
 	}
 
 	return result
 }
 
-func (m Map) RawE() (interface{}, error) {
-	result := map[string]interface{}{}
-	var raw interface{}
-	var err error
-
-	for key, value := range m {
-		raw, err = value.RawE()
-
-		// Handle value
-		result[key] = raw
+func (m Map) Get(key string) Value {
+	result, err := m.GetE(key)
+	if err != nil {
+		panic(err)
 	}
-
-	return result, err
+	return result
 }
 
-// Get gets the first value associated with the given key.
-// If there are no values associated with the key, Get returns
+// GetE gets the first value associated with the given key.
+// If there are no values associated with the key, GetE returns
 // nil. To access multiple values, use GetCollection or Collection.
-func (m Map) Get(key string) Value {
+func (m Map) GetE(key string) (Value, error) {
 	if key == "" {
-		return NewValue(m)
+		return NewValue(m), nil
 	}
 
 	currentKey, rest := splitKey(key)
 
 	// when you request something with an Asterisk, you always develop a collection
 	if currentKey == "*" {
-		collection := NewCollection()
+		collection := Collection{}
 		for _, values := range m {
 			for _, value := range values.Collection() {
 				collection = collection.Push(value)
 			}
 		}
 
-		return NewValue(collection)
+		return NewValue(collection), nil
 	}
 
 	value, found := m[currentKey]
 	if !found {
-		info := ""
-		if currentKey != key {
-			info = " ('" + key + "')"
-		}
-		return NewValueE(nil, errors.New("no value found with key '"+currentKey+"'"+info))
+		return Value{}, CanNotFoundValueError.Wrap("key '%s'%s", currentKey, getKeyInfo(key, currentKey))
 	}
 
 	switch value.Source().(type) {
 	case Collection:
-		return value.Collection().Get(joinRest(rest))
+		return value.Collection().GetE(joinRest(rest))
 	case Map:
-		return value.Map().Get(joinRest(rest))
+		return value.Map().GetE(joinRest(rest))
 	default:
-		return value.Get(joinRest(rest))
+		return value.GetE(joinRest(rest))
 	}
+}
+
+func getKeyInfo(key string, currentKey string) string {
+	info := ""
+	if currentKey != key {
+		info = " ('" + key + "')"
+	}
+	return info
 }
 
 // Set sets the key to value. It replaces any existing
@@ -110,8 +109,9 @@ func (m Map) Set(key string, value Value) Map {
 func (m Map) Only(keys ...string) Map {
 	result := Map{}
 	for _, key := range keys {
-		if m.Has(key) {
-			result.Set(key, m.Get(key))
+		item, err := m.GetE(key)
+		if err == nil {
+			result.Set(key, item)
 		}
 	}
 
@@ -153,7 +153,7 @@ func (m Map) Delete(key string) {
 }
 
 func (m Map) Collection() Collection {
-	collection := NewCollection()
+	collection := Collection{}
 	for _, value := range m {
 		collection = collection.Push(value)
 	}
@@ -187,8 +187,8 @@ func (m Map) First() Value {
 
 func (m Map) Has(keys ...string) bool {
 	for _, key := range keys {
-		// todo don't check for nil error, but for NotFound error
-		if m.Get(key).Error() != nil {
+		_, err := m.GetE(key)
+		if err != nil {
 			return false
 		}
 	}
@@ -202,8 +202,8 @@ func (m Map) HasAny(keys ...string) bool {
 	}
 
 	for _, key := range keys {
-		// todo don't check for nil error, but for NotFound error
-		if m.Get(key).Error() == nil {
+		result, err := m.GetE(key)
+		if err != nil && !result.Empty() {
 			return true
 		}
 	}
@@ -217,7 +217,8 @@ func (m Map) Missing(keys ...string) bool {
 
 func (m Map) Filled(keys ...string) bool {
 	for _, key := range keys {
-		if m.Get(key).Empty() {
+		result, err := m.GetE(key)
+		if err != nil || result.Empty() {
 			return false
 		}
 	}

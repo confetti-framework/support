@@ -13,10 +13,10 @@ func Test_get_all_from_collection(t *testing.T) {
 		"Sammy",
 	})
 
-	value := values.Get("*")
+	value := values.Get("*").Collection()
 	require.Len(
 		t,
-		value.Collection(),
+		value,
 		3,
 	)
 }
@@ -30,10 +30,10 @@ func Test_get_collection_by_key(t *testing.T) {
 	languages := values.Get("language.*")
 	require.Equal(t, "Go", languages.Collection().First().String())
 
-	names := values.Get("names.*")
+	name := values.Get("names.*").Collection()[0].Raw()
 	require.Equal(
 		t,
-		support.NewCollection([]string{"David", "Jona"}),
-		names.Collection(),
+		"David",
+		name,
 	)
 }

@@ -72,80 +72,12 @@ func Test_raw_from_value_with_collection_and_map(t *testing.T) {
 	require.Equal(t, []interface{}{map[string]interface{}{"key": "door"}}, actual)
 }
 
-func Test_raw_from_value_with_error(t *testing.T) {
-	raw, err := support.NewValueE(100, "this is an error").RawE()
+func Test_raw_from_value(t *testing.T) {
+	raw := support.NewValue(100).Raw()
 	require.Equal(t, 100, raw)
-	require.EqualError(t, err, "this is an error")
 }
 
-func Test_raw_from_value_without_error(t *testing.T) {
-	raw, err := support.NewValueE(100, nil).RawE()
-	require.Equal(t, 100, raw)
-	require.NoError(t, err)
-}
-
-func Test_raw_from_value_and_collection_with_multiple_errors(t *testing.T) {
-	raw, errs := support.NewValue(
-		support.NewCollection(
-			support.NewValueE(100, "this the first error"),
-			support.NewValueE(100, "this is the second error"),
-		),
-	).RawE()
-
-	require.Equal(t, []interface{}{100, 100}, raw)
-	require.EqualError(t, errs, "this is the second error")
-}
-
-func Test_raw_from_value_and_map_with_multiple_errors(t *testing.T) {
-	raw, errs := support.NewValue(
-		support.NewMap(map[string]interface{}{
-			"key1": support.NewValueE(100, "this the first error"),
-			"key2": support.NewValueE(150, "this is the second error"),
-		}),
-	).RawE()
-
-	require.Equal(t, map[string]interface{}{"key1": 100, "key2": 150}, raw)
-	require.NotEmpty(t, errs.Error())
-}
-
-func Test_raw_value_panic(t *testing.T) {
-	value := support.NewValueE(nil, "an error")
-
-	action := func() {
-		value.Raw()
-	}
-
-	require.PanicsWithError(t, "an error", action)
-}
-
-func Test_raw_value_with_value_panic(t *testing.T) {
-	value := support.NewValue(support.NewValueE(nil, "an error"))
-
-	action := func() {
-		value.Raw()
-	}
-
-	require.PanicsWithError(t, "an error", action)
-}
-
-func Test_raw_collection_panic(t *testing.T) {
-	value := support.NewCollection(support.NewValueE(nil, "an error"))
-
-	action := func() {
-		value.Raw()
-	}
-
-	require.PanicsWithError(t, "an error", action)
-}
-
-func Test_raw_map_panic(t *testing.T) {
-	value := support.NewMap(map[string]interface{}{
-		"key": support.NewValueE(nil, "an error"),
-	})
-
-	action := func() {
-		value.Raw()
-	}
-
-	require.PanicsWithError(t, "an error", action)
+func Test_raw_collection_with_int_in_slice(t *testing.T) {
+	value := support.NewCollection([]int{2})
+	require.Equal(t, []interface{}{2}, value.Raw())
 }
