@@ -153,10 +153,18 @@ func Test_map_set_struct(t *testing.T) {
 	require.Equal(t, mockUser{}, data.Get("user").Raw())
 }
 
-// func Test_map_string_by_dot_notation(t *testing.T) {
-// 	data := support.NewMap(map[string]string{})
-// 	data.Set("user.name", "Rob")
-// 	require.Equal(t, mockUser{}, data.Get("user.name").String())
-// }
+func Test_map_set_by_dot_notation(t *testing.T) {
+	data := support.NewMap(map[string]string{})
+	data.Set("user.name", "Rob")
+	require.Equal(t, "Rob", data.Get("user.name").String())
+}
+
+func Test_map_set_by_dot_notation_with_existing_data(t *testing.T) {
+	data := support.NewMap(map[string]interface{}{"user": map[string]string{"street": "Frozen street"}})
+	data.Set("user.name", "Rob")
+	require.Equal(t, "Rob", data.Get("user.name").String())
+	require.Equal(t, "Frozen street", data.Get("user.street").String())
+	require.Equal(t, map[string]interface{}{"street": "Frozen street", "name": "Rob"}, data.Get("user").Map().Raw())
+}
 
 type mockUser struct{}

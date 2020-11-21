@@ -255,3 +255,21 @@ func (v Value) Split(separator string) Collection {
 
 	return NewCollection(result)
 }
+
+func (v Value) Set(key string, input interface{}) Value {
+	// if value is nil, create a map to set the value
+	if v.source == nil {
+		v.source = NewMap()
+	}
+
+	switch source := v.source.(type) {
+	case Map:
+		return NewValue(source.Set(key, input))
+	}
+	return Value{}
+	// return CanNotSetValueError.Wrap("blablabla")
+	// return CanNotSetValueError.Wrap("blablabla")
+	// return CanNotSetValueError.Wrap("blablabla")
+	// return CanNotSetValueError.Wrap("blablabla")
+	// return CanNotSetValueError.Wrap("blablabla")
+}

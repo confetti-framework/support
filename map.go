@@ -75,7 +75,11 @@ func (m Map) GetE(key string) (Value, error) {
 		return NewValue(collection), nil
 	}
 
-	value, found := m[currentKey]
+	value, found := m[key]
+	if found {
+		return value, nil
+	}
+	value, found = m[currentKey]
 	if !found {
 		return Value{}, CanNotFoundValueError.Wrap("key '%s'%s", currentKey, getKeyInfo(key, currentKey))
 	}
@@ -100,14 +104,17 @@ func getKeyInfo(key string, currentKey string) string {
 
 // Set sets the key to value by dot notation
 func (m Map) Set(key string, input interface{}) Map {
-	var value Value
-	switch rawValue := input.(type) {
-	case Value:
-		value = rawValue
-	default:
-		value = NewValue(input)
+	currentKey, rest := splitKey(key)
+	value := NewValue(input)
+
+	// If we use dot notation we want to set the value deeper
+	if key != currentKey {
+		currentValue := m[currentKey]
+		m[currentKey] = currentValue.Set(joinRest(rest), value)
+	} else {
+		m[currentKey] = NewValue(input)
 	}
-	m[key] = value
+
 	return m
 }
 
