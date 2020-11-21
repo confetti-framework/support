@@ -98,11 +98,16 @@ func getKeyInfo(key string, currentKey string) string {
 	return info
 }
 
-// Set sets the key to value. It replaces any existing
-// values.
-func (m Map) Set(key string, value Value) Map {
+// Set sets the key to value by dot notation
+func (m Map) Set(key string, input interface{}) Map {
+	var value Value
+	switch rawValue := input.(type) {
+	case Value:
+		value = rawValue
+	default:
+		value = NewValue(input)
+	}
 	m[key] = value
-
 	return m
 }
 

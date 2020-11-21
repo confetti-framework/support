@@ -37,3 +37,21 @@ func Test_get_collection_by_key(t *testing.T) {
 		name,
 	)
 }
+
+func Test_get_collection_by_unknown_key(t *testing.T) {
+	values := support.NewValue([]string{"house", "door"})
+
+	result, err := values.GetE("2")
+	require.EqualError(t, err, "key '2': can not found value")
+	require.Equal(t, support.NewValue(emptyInterface), result)
+}
+
+func Test_get_collection_by_known_key(t *testing.T) {
+	values := support.NewValue([]string{"house", "door"})
+
+	result, err := values.GetE("1")
+	require.Nil(t, err)
+	require.Equal(t, "door", result.String())
+}
+
+var emptyInterface interface{}

@@ -134,3 +134,29 @@ func Test_map_filled_with_one_not_present(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear"})
 	require.False(t, data.Filled("username", "password"))
 }
+
+func Test_map_set_value(t *testing.T) {
+	data := support.NewMap(map[string]string{})
+	data.Set("username", support.NewValue("apple_pear"))
+	require.Equal(t, "apple_pear", data.Get("username").String())
+}
+
+func Test_map_set_string(t *testing.T) {
+	data := support.NewMap(map[string]string{})
+	data.Set("username", "apple_pear")
+	require.Equal(t, "apple_pear", data.Get("username").String())
+}
+
+func Test_map_set_struct(t *testing.T) {
+	data := support.NewMap(map[string]string{})
+	data.Set("user", mockUser{})
+	require.Equal(t, mockUser{}, data.Get("user").Raw())
+}
+
+// func Test_map_string_by_dot_notation(t *testing.T) {
+// 	data := support.NewMap(map[string]string{})
+// 	data.Set("user.name", "Rob")
+// 	require.Equal(t, mockUser{}, data.Get("user.name").String())
+// }
+
+type mockUser struct{}

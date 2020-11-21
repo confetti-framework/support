@@ -95,12 +95,9 @@ func (v Value) GetE(key string) (Value, error) {
 			return Value{}, err
 		}
 		collection := v.source.(Collection)
-
-		// !todo:
-
-		// if len(collection) > nextKey {
-		// 	return Value{}, CanNotFoundValueInMapError.Wrap("key '%s' (%s)", currentKey, key)
-		// }
+		if len(collection) < (keyInt + 1) {
+			return Value{}, CanNotFoundValueError.Wrap("key '%s'%s", currentKey, getKeyInfo(key, currentKey))
+		}
 		return collection[keyInt].GetE(nextKey)
 	case Map:
 		value, ok := v.source.(Map)[currentKey]
