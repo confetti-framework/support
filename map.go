@@ -102,20 +102,24 @@ func getKeyInfo(key string, currentKey string) string {
 	return info
 }
 
-// Set sets the key to value by dot notation
-func (m Map) Set(key string, input interface{}) Map {
+// SetE sets the key to value by dot notation
+func (m Map) SetE(key string, input interface{}) (Map, error) {
 	currentKey, rest := splitKey(key)
 	value := NewValue(input)
 
-	// If we use dot notation we want to set the value deeper
+	// If we have a dot notation we want to set the value deeper
 	if key != currentKey {
 		currentValue := m[currentKey]
-		m[currentKey] = currentValue.Set(joinRest(rest), value)
+		nestedValue, err := currentValue.SetE(joinRest(rest), value)
+		if err != nil {
+			return m, err
+		}
+		m[currentKey] = nestedValue
 	} else {
 		m[currentKey] = NewValue(input)
 	}
 
-	return m
+	return m, nil
 }
 
 func (m Map) Only(keys ...string) Map {
@@ -123,7 +127,7 @@ func (m Map) Only(keys ...string) Map {
 	for _, key := range keys {
 		item, err := m.GetE(key)
 		if err == nil {
-			result.Set(key, item)
+			result.SetE(key, item)
 		}
 	}
 

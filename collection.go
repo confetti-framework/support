@@ -1,7 +1,6 @@
 package support
 
 import (
-	"github.com/lanvard/errors"
 	"reflect"
 	"strconv"
 )
@@ -79,11 +78,11 @@ func (c Collection) GetE(key string) (Value, error) {
 
 	index, err := strconv.Atoi(key)
 	if err != nil {
-		return Value{}, errors.New(key + " can only be a number or *")
+		return Value{}, InvalidCollectionKeyError.Wrap("'%s' can only be a number or *", key)
 	}
 
 	if len(c) < (index + 1) {
-		return Value{}, errors.New(key + " not found")
+		return Value{}, CanNotFoundValueError.Wrap("'%s' not found", key)
 	}
 
 	return c[index], nil
@@ -99,6 +98,27 @@ func (c Collection) First() Value {
 
 func (c Collection) Push(item interface{}) Collection {
 	return append(c, NewValue(item))
+}
+
+func (c Collection) SetE(key string, value interface{}) (Collection, error) {
+	if key == "" {
+		return c.Push(value), nil
+	}
+
+	currentKey, rest := splitKey(key)
+	if currentKey != "*" {
+		return c, InvalidCollectionKeyError.Wrap("key '%s' can only begin with an asterisk", key)
+	}
+
+	if len(rest) == 0 {
+		return c.Push(value), nil
+	}
+
+	newCollection, err := NewCollection().SetE(joinRest(rest), value)
+	if err != nil {
+		return nil, err
+	}
+	return c.Push(newCollection), nil
 }
 
 func (c Collection) Reverse() Collection {

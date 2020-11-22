@@ -54,4 +54,52 @@ func Test_get_collection_by_known_key(t *testing.T) {
 	require.Equal(t, "door", result.String())
 }
 
+func Test_collection_get_by_string(t *testing.T) {
+	data := support.NewCollection([]string{})
+	result, err := data.GetE("username")
+	require.EqualError(t, err, "'username' can only be a number or *")
+	require.Equal(t, support.NewValue(emptyInterface), result)
+}
+
+func Test_collection_push_value(t *testing.T) {
+	data := support.NewCollection([]string{})
+	data = data.Push(support.NewValue("apple_pear"))
+	require.Equal(t, "apple_pear", data.Get("0").String())
+}
+
+func Test_collection_set_by_invalid_key(t *testing.T) {
+	data := support.NewCollection([]string{})
+	data, err := data.SetE("invalid_key", support.NewValue("apple_pear"))
+	require.EqualError(t, err, "key 'invalid_key' can only begin with an asterisk")
+	require.Equal(t, support.NewCollection([]string{}), data)
+}
+
+func Test_collection_set_asterisk(t *testing.T) {
+	data := support.NewCollection([]string{})
+	data, err := data.SetE("*", support.NewValue("apple_pear"))
+	require.Nil(t, err)
+	require.Equal(t, []interface{}{"apple_pear"}, data.Raw())
+}
+
+func Test_collection_set_nested_collection(t *testing.T) {
+	data := support.NewCollection([]string{})
+	data, err := data.SetE("*.*", support.NewValue("apple_pear"))
+	require.Nil(t, err)
+	require.Equal(t, []interface{}{[]interface{}{"apple_pear"}}, data.Raw())
+}
+
+func Test_collection_set_nested_collection_with_existing_data(t *testing.T) {
+	data := support.NewCollection([]string{"berry"})
+	data, err := data.SetE("*.*", support.NewValue("apple_pear"))
+	require.Nil(t, err)
+	require.Equal(t, []interface{}{"berry", []interface{}{"apple_pear"}}, data.Raw())
+}
+
+func Test_collection_set_collection(t *testing.T) {
+	data := support.NewCollection()
+	data, err := data.SetE("*", support.NewCollection(support.NewValue("apple_pear")))
+	require.Nil(t, err)
+	require.Equal(t, []interface{}{[]interface{}{"apple_pear"}}, data.Raw())
+}
+
 var emptyInterface interface{}

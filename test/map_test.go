@@ -137,31 +137,31 @@ func Test_map_filled_with_one_not_present(t *testing.T) {
 
 func Test_map_set_value(t *testing.T) {
 	data := support.NewMap(map[string]string{})
-	data.Set("username", support.NewValue("apple_pear"))
+	data.SetE("username", support.NewValue("apple_pear"))
 	require.Equal(t, "apple_pear", data.Get("username").String())
 }
 
 func Test_map_set_string(t *testing.T) {
 	data := support.NewMap(map[string]string{})
-	data.Set("username", "apple_pear")
+	data.SetE("username", "apple_pear")
 	require.Equal(t, "apple_pear", data.Get("username").String())
 }
 
 func Test_map_set_struct(t *testing.T) {
 	data := support.NewMap(map[string]string{})
-	data.Set("user", mockUser{})
+	data.SetE("user", mockUser{})
 	require.Equal(t, mockUser{}, data.Get("user").Raw())
 }
 
 func Test_map_set_by_dot_notation(t *testing.T) {
 	data := support.NewMap(map[string]string{})
-	data.Set("user.name", "Rob")
+	data.SetE("user.name", "Rob")
 	require.Equal(t, "Rob", data.Get("user.name").String())
 }
 
 func Test_map_set_by_dot_notation_with_existing_data(t *testing.T) {
 	data := support.NewMap(map[string]interface{}{"user": map[string]string{"street": "Frozen street"}})
-	data.Set("user.name", "Rob")
+	data.SetE("user.name", "Rob")
 	require.Equal(t, "Rob", data.Get("user.name").String())
 	require.Equal(t, "Frozen street", data.Get("user.street").String())
 	require.Equal(t, map[string]interface{}{"street": "Frozen street", "name": "Rob"}, data.Get("user").Map().Raw())

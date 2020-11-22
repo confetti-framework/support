@@ -256,7 +256,18 @@ func (v Value) Split(separator string) Collection {
 	return NewCollection(result)
 }
 
-func (v Value) Set(key string, input interface{}) Value {
+func (v Value) SetE(key string, input interface{}) (Value, error) {
+	currentKey, _ := splitKey(key)
+	if currentKey == "" {
+		v.source = input
+	}
+	// if key is an asterisk, create collection if necessary
+	if currentKey == "*" && v.source == nil {
+		v.source = NewCollection()
+	}
+	if _, isCollection := v.source.(Collection); !isCollection && currentKey == "*" {
+		return v, CanNotAppendValueError.Wrap("can not append value on '%s'", Type(v.source))
+	}
 	// if value is nil, create a map to set the value
 	if v.source == nil {
 		v.source = NewMap()
@@ -264,12 +275,15 @@ func (v Value) Set(key string, input interface{}) Value {
 
 	switch source := v.source.(type) {
 	case Map:
-		return NewValue(source.Set(key, input))
+		nestedMap, err := source.SetE(key, input)
+		if err != nil {
+			return v, err
+		}
+		return NewValueE(nestedMap)
+	case Collection:
+		collection, err := source.SetE(key, input)
+		v.source = collection
+		return v, err
 	}
-	return Value{}
-	// return CanNotSetValueError.Wrap("blablabla")
-	// return CanNotSetValueError.Wrap("blablabla")
-	// return CanNotSetValueError.Wrap("blablabla")
-	// return CanNotSetValueError.Wrap("blablabla")
-	// return CanNotSetValueError.Wrap("blablabla")
+	return v, nil
 }
