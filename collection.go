@@ -106,24 +106,16 @@ func (c Collection) SetE(key string, value interface{}) (Collection, error) {
 	}
 
 	currentKey, rest := splitKey(key)
+	if currentKey != "*" {
+		return c, InvalidCollectionKeyError.Wrap("key '%s' can only begin with an asterisk", key)
+	}
 
 	if len(rest) == 0 {
 		return c.Push(value), nil
 	}
-	var nestedValue interface{}
-	var err error
-
-	if currentKey == "*" {
-		nestedValue, err := NewValue(nil).SetE(joinRest(rest), value)
-		if err != nil {
-			return c, err
-		}
-		c.Push(nestedValue)
-	}
-
-	nestedValue, err = NewMap().SetE(joinRest(rest), value)
+	nestedValue, err := NewValue(nil).SetE(joinRest(rest), value)
 	if err != nil {
-		return nil, err
+		return c, err
 	}
 	return c.Push(nestedValue), nil
 }
