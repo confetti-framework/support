@@ -167,4 +167,12 @@ func Test_map_set_by_dot_notation_with_existing_data(t *testing.T) {
 	require.Equal(t, map[string]interface{}{"street": "Frozen street", "name": "Rob"}, data.Get("user").Map().Raw())
 }
 
+func Test_set_collection_on_map(t *testing.T) {
+	var err error
+	data := support.NewValue(nil)
+	data, err = data.SetE("names.*", "Jaap")
+	require.Nil(t, err)
+	require.Equal(t, map[string]interface{}{"names": []interface{}{"Jaap"}}, data.Raw())
+}
+
 type mockUser struct{}
