@@ -288,6 +288,26 @@ func (v Value) SetE(key string, input interface{}) (Value, error) {
 	return v, nil
 }
 
+func (v Value) Only(keys ...string) Value {
+	result, err := v.OnlyE(keys...)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (v Value) OnlyE(keys ...string) (Value, error) {
+	switch source := v.source.(type) {
+	case Map:
+		result, err := source.OnlyE(keys...)
+		return NewValue(result), err
+	case Collection:
+		result, err := source.OnlyE(keys...)
+		return NewValue(result), err
+	}
+	return v, nil
+}
+
 // convert keys with an asterisk to usable keys
 func GetSearchableKeys(originKeys []string, value Value) []string {
 	keys := []string{}
