@@ -1,6 +1,7 @@
 package support
 
 import (
+	"github.com/lanvard/errors"
 	"reflect"
 	"strconv"
 )
@@ -62,17 +63,22 @@ func (c Collection) GetE(key string) (Value, error) {
 	if currentKey == "*" {
 
 		flattenCollection := Collection{}
+		flattenMap := Map{}
+
 		for _, value := range c {
 			switch Type(value.Source()) {
 			case reflect.Slice, reflect.Array:
 				flattenCollection = append(flattenCollection, value.Source().(Collection)...)
 			case reflect.Map:
-				flattenCollection = append(flattenCollection, value.Source().(Map).Collection()...)
+				flattenMap = value.Source().(Map).Merge(flattenMap)
 			default:
 				return NewValue(c), nil
 			}
 		}
 
+		if len(flattenMap) > 0 {
+			return flattenMap.GetE(joinRest(rest))
+		}
 		return flattenCollection.GetE(joinRest(rest))
 	}
 
@@ -138,6 +144,32 @@ func (c Collection) Contains(search interface{}) bool {
 	}
 
 	return false
+}
+
+func (c Collection) Only(keys ...string) Collection {
+	result, err := c.OnlyE(keys...)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (c Collection) OnlyE(keys ...string) (Collection, error) {
+	result := Collection{}
+	var err error
+
+	realKeys := GetSearchableKeys(keys, NewValue(c))
+	for _, key := range realKeys {
+		item, err := c.GetE(key)
+		if errors.Is(err, InvalidCollectionKeyError) {
+			return result, errors.Wrap(err, "invalid only key on collection")
+		}
+		if err == nil {
+			result, err = result.SetE(key, item)
+		}
+	}
+
+	return result, err
 }
 
 // The len method returns the length of the collection

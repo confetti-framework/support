@@ -63,7 +63,7 @@ func (m Map) GetE(key string) (Value, error) {
 
 	currentKey, rest := splitKey(key)
 
-	// when you request something with an Asterisk, you always develop a collection
+	// when you request something with an asterisk, you always develop a collection
 	if currentKey == "*" {
 		collection := Collection{}
 		for _, value := range m {
@@ -146,6 +146,7 @@ func (m Map) Only(keys ...string) Map {
 func (m Map) OnlyE(keys ...string) (Map, error) {
 	result := Map{}
 	var err error
+
 	realKeys := GetSearchableKeys(keys, NewValue(m))
 	for _, key := range realKeys {
 		item, err := m.GetE(key)

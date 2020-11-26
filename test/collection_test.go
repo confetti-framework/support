@@ -139,4 +139,40 @@ func Test_set_map_on_collection(t *testing.T) {
 	assert.Equal(t, []interface{}{map[string]interface{}{"name": "Jaap"}}, data.Raw())
 }
 
+func Test_collection_only_empty_collection(t *testing.T) {
+	data := support.NewCollection()
+	require.Equal(t, []interface{}(nil), data.Only().Raw())
+}
+
+func Test_collection_only_one_string(t *testing.T) {
+	data := support.NewCollection("wolf")
+	_, err := data.OnlyE("wolf")
+	require.EqualError(t, err, "invalid only key on collection: 'wolf' can only be a number or *")
+}
+
+func Test_collection_only_nothing(t *testing.T) {
+	data := support.NewCollection("wolf")
+	require.Equal(t, []interface{}(nil), data.Only().Raw())
+}
+
+func Test_collection_only_with_asterisk(t *testing.T) {
+	data := support.NewCollection("wolf")
+	require.Equal(t, []interface{}{[]interface{}{"wolf"}}, data.Only("*").Raw())
+}
+
+func Test_collection_only_with_multiple_values(t *testing.T) {
+	data := support.NewCollection("wolf", "lamb")
+	require.Equal(t, []interface{}{[]interface{}{"wolf", "lamb"}}, data.Only("*").Raw())
+}
+
+func Test_collection_only_with_map(t *testing.T) {
+	data := support.NewCollection(map[string]string{"lamp": "wool"})
+	require.Equal(t, []interface{}{map[string]interface{}{"lamp": "wool"}}, data.Only("*").Raw())
+}
+
+func Test_collection_only_with_map_and_key(t *testing.T) {
+	data := support.NewCollection(map[string]string{"lamp": "wool", "fish": "water"})
+	require.Equal(t, []interface{}{map[string]interface{}{"lamp": "wool"}}, data.Only("*.lamp").Raw())
+}
+
 var emptyInterface interface{}
