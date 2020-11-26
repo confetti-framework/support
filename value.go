@@ -287,3 +287,44 @@ func (v Value) SetE(key string, input interface{}) (Value, error) {
 	}
 	return v, nil
 }
+
+// convert keys with an asterisk to usable keys
+func GetSearchableKeys(originKeys []string, value Value) []string {
+	keys := []string{}
+	for _, key := range originKeys {
+		keys = append(keys, getSearchableByOneKey(key, value)...)
+	}
+	return keys
+}
+
+// convert key with an asterisk to usable keys
+func getSearchableByOneKey(originKey string, input Value) []string {
+	if !strings.Contains(originKey, "*") {
+		return []string{originKey}
+	}
+
+	keys := []string{}
+	current, rest := splitKey(originKey)
+	switch source := input.source.(type) {
+	case Map:
+		for realKey := range source {
+			if current == realKey || current == "*" {
+				nestedKeys := getSearchableByOneKey(joinRest(rest), source[realKey])
+				for _, nestedKey := range nestedKeys {
+					keys = append(keys, getFullRealKey(realKey, nestedKey))
+				}
+			}
+		}
+	case Collection:
+		keys = append(keys, current)
+	}
+
+	return keys
+}
+
+func getFullRealKey(realKey string, nestedKey string) string {
+	if nestedKey == "" {
+		return realKey
+	}
+	return realKey + "." + nestedKey
+}

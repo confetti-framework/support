@@ -38,6 +38,27 @@ func Test_map_only_when_more_keys_than_present(t *testing.T) {
 	require.Equal(t, data, data.Only("username", "password", "age"))
 }
 
+func Test_map_only_with_asterisk_and_nested_key(t *testing.T) {
+	data := support.NewMap(map[string]map[string]string{
+		"piet_niet": {
+			"username": "piet",
+			"password": "afd23432a12",
+		},
+		"jan_kan": {
+			"username": "jan",
+			"password": "34a@#dQd",
+		},
+	})
+
+	require.Equal(t, map[string]interface{}{
+		"piet_niet": map[string]interface{}{
+			"username": "piet",
+		},
+		"jan_kan": map[string]interface{}{
+			"username": "jan",
+		}}, data.Only("*.username").Raw())
+}
+
 func Test_map_except_when_no_keys_are_present(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
 	require.Equal(t, data, data.Except())

@@ -66,10 +66,12 @@ func (m Map) GetE(key string) (Value, error) {
 	// when you request something with an Asterisk, you always develop a collection
 	if currentKey == "*" {
 		collection := Collection{}
-		for _, values := range m {
-			for _, value := range values.Collection() {
-				collection = collection.Push(value)
+		for _, value := range m {
+			nestedValue, err := value.GetE(joinRest(rest))
+			if err != nil {
+				return nestedValue, err
 			}
+			collection = collection.Push(nestedValue)
 		}
 
 		return NewValue(collection), nil
@@ -123,6 +125,7 @@ func (m Map) SetE(key string, input interface{}) (Map, error) {
 }
 
 func (m Map) Only(keys ...string) Map {
+	// m.getAllKeys(keys)
 	result := Map{}
 	for _, key := range keys {
 		item, err := m.GetE(key)
