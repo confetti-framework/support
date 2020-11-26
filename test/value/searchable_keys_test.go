@@ -79,6 +79,14 @@ func Test_keys_with_collection(t *testing.T) {
 	require.Equal(t, expect, result)
 }
 
+func Test_keys_with_collection_and_map(t *testing.T) {
+	given := []string{"*.*"}
+	expect := []string{"*.big", "*.small"}
+	value := support.NewValue(support.NewCollection(support.NewMap(map[string]string{"big": "mule", "small": "black"})))
+	result := support.GetSearchableKeys(given, value)
+	equalStrings(t, expect, result)
+}
+
 func equalStrings(t *testing.T, expect []string, result []string) {
 	sort.Strings(expect)
 	sort.Strings(result)

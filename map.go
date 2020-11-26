@@ -67,11 +67,22 @@ func (m Map) GetE(key string) (Value, error) {
 	if currentKey == "*" {
 		collection := Collection{}
 		for _, value := range m {
-			nestedValue, err := value.GetE(joinRest(rest))
+			nestedValueRaw, err := value.GetE(joinRest(rest))
 			if err != nil {
-				return nestedValue, err
+				return nestedValueRaw, err
 			}
-			collection = collection.Push(nestedValue)
+			switch nestedValues := nestedValueRaw.source.(type) {
+			case Collection:
+				for _, nestedValue := range nestedValues {
+					collection = collection.Push(nestedValue)
+				}
+			case Map:
+				for _, nestedValue := range nestedValues {
+					collection = collection.Push(nestedValue)
+				}
+			default:
+				panic("invalid type of nested value: " + Name(nestedValues))
+			}
 		}
 
 		return NewValue(collection), nil
@@ -125,16 +136,25 @@ func (m Map) SetE(key string, input interface{}) (Map, error) {
 }
 
 func (m Map) Only(keys ...string) Map {
-	// m.getAllKeys(keys)
+	result, err := m.OnlyE(keys...)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
+func (m Map) OnlyE(keys ...string) (Map, error) {
 	result := Map{}
-	for _, key := range keys {
+	var err error
+	realKeys := GetSearchableKeys(keys, NewValue(m))
+	for _, key := range realKeys {
 		item, err := m.GetE(key)
 		if err == nil {
-			result.SetE(key, item)
+			result, err = result.SetE(key, item)
 		}
 	}
 
-	return result
+	return result, err
 }
 
 func (m Map) Except(keys ...string) Map {

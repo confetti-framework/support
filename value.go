@@ -307,16 +307,24 @@ func getSearchableByOneKey(originKey string, input Value) []string {
 	current, rest := splitKey(originKey)
 	switch source := input.source.(type) {
 	case Map:
-		for realKey := range source {
+		for realKey, nestedValue := range source {
 			if current == realKey || current == "*" {
-				nestedKeys := getSearchableByOneKey(joinRest(rest), source[realKey])
+				nestedKeys := getSearchableByOneKey(joinRest(rest), nestedValue)
 				for _, nestedKey := range nestedKeys {
 					keys = append(keys, getFullRealKey(realKey, nestedKey))
 				}
 			}
 		}
 	case Collection:
-		keys = append(keys, current)
+		for _, nestedValue := range source {
+			nestedKeys := getSearchableByOneKey(joinRest(rest), nestedValue)
+			for _, nestedKey := range nestedKeys {
+				fullRealKey := getFullRealKey(current, nestedKey)
+				if !containsString(keys, fullRealKey) {
+					keys = append(keys, fullRealKey)
+				}
+			}
+		}
 	}
 
 	return keys
@@ -327,4 +335,13 @@ func getFullRealKey(realKey string, nestedKey string) string {
 		return realKey
 	}
 	return realKey + "." + nestedKey
+}
+
+func containsString(strings []string, expect string) bool {
+	for _, string := range strings {
+		if string == expect {
+			return true
+		}
+	}
+	return false
 }

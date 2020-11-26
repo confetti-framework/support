@@ -8,8 +8,8 @@ import (
 
 func Test_get_all_from_map(t *testing.T) {
 	values := support.NewMap(map[string][]string{
-		"language": {"Go"},
 		"names":    {"David", "Jona"},
+		"language": {"Go"},
 	})
 
 	value := values.Get("*")
