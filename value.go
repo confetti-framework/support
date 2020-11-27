@@ -256,6 +256,14 @@ func (v Value) Split(separator string) Collection {
 	return NewCollection(result)
 }
 
+func (v Value) Set(key string, input interface{}) Value {
+	result, err := v.SetE(key, input)
+	if err != nil {
+		panic(err)
+	}
+	return result
+}
+
 func (v Value) SetE(key string, input interface{}) (Value, error) {
 	currentKey, _ := splitKey(key)
 	if currentKey == "" {
