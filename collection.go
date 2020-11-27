@@ -82,7 +82,7 @@ func (c Collection) GetE(key string) (Value, error) {
 		return flattenCollection.GetE(joinRest(rest))
 	}
 
-	index, err := strconv.Atoi(key)
+	index, err := strconv.Atoi(currentKey)
 	if err != nil {
 		return Value{}, InvalidCollectionKeyError.Wrap("'%s' can only be a number or *", key)
 	}
@@ -91,7 +91,7 @@ func (c Collection) GetE(key string) (Value, error) {
 		return Value{}, CanNotFoundValueError.Wrap("'%s' not found", key)
 	}
 
-	return c[index], nil
+	return c[index].GetE(joinRest(rest))
 }
 
 func (c Collection) First() Value {
@@ -112,8 +112,9 @@ func (c Collection) SetE(key string, value interface{}) (Collection, error) {
 	}
 
 	currentKey, rest := splitKey(key)
-	if currentKey != "*" {
-		return c, InvalidCollectionKeyError.Wrap("key '%s' can only begin with an asterisk", key)
+	_, err := strconv.Atoi(currentKey)
+	if currentKey != "*" && err != nil {
+		return c, InvalidCollectionKeyError.Wrap("key '%s' can only begin with an asterisk or number", key)
 	}
 
 	if len(rest) == 0 {
@@ -160,12 +161,12 @@ func (c Collection) OnlyE(keys ...string) (Collection, error) {
 
 	realKeys := GetSearchableKeys(keys, NewValue(c))
 	for _, key := range realKeys {
-		item, err := c.GetE(key)
+		nestedValue, err := c.GetE(key)
 		if errors.Is(err, InvalidCollectionKeyError) {
 			return result, errors.Wrap(err, "invalid only key on collection")
 		}
 		if err == nil {
-			result, err = result.SetE(key, item)
+			result, err = result.SetE(key, nestedValue)
 		}
 	}
 

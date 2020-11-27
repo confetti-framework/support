@@ -336,10 +336,10 @@ func getSearchableByOneKey(originKey string, input Value) []string {
 			}
 		}
 	case Collection:
-		for _, nestedValue := range source {
+		for realKey, nestedValue := range source {
 			nestedKeys := getSearchableByOneKey(joinRest(rest), nestedValue)
 			for _, nestedKey := range nestedKeys {
-				fullRealKey := getFullRealKey(current, nestedKey)
+				fullRealKey := getFullRealKey(strconv.Itoa(realKey), nestedKey)
 				if !containsString(keys, fullRealKey) {
 					keys = append(keys, fullRealKey)
 				}
@@ -358,8 +358,8 @@ func getFullRealKey(realKey string, nestedKey string) string {
 }
 
 func containsString(strings []string, expect string) bool {
-	for _, string := range strings {
-		if string == expect {
+	for _, s := range strings {
+		if s == expect {
 			return true
 		}
 	}

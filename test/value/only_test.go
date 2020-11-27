@@ -18,5 +18,5 @@ func Test_map_only_from_value(t *testing.T) {
 
 func Test_collection_only_from_value(t *testing.T) {
 	value := support.NewValue([]string{"salamander", "koala"})
-	require.Equal(t, []interface{}{[]interface{}{"salamander", "koala"}}, value.Only("*").Raw())
+	require.Equal(t, []interface{}{"salamander", "koala"}, value.Only("*").Raw())
 }

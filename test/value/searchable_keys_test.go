@@ -73,7 +73,7 @@ func Test_no_keys_with_map(t *testing.T) {
 
 func Test_keys_with_collection(t *testing.T) {
 	given := []string{"*"}
-	expect := []string{"*"}
+	expect := []string{"0", "1"}
 	value := support.NewValue(support.NewCollection([]string{"mule", "black"}))
 	result := support.GetSearchableKeys(given, value)
 	require.Equal(t, expect, result)
@@ -81,7 +81,7 @@ func Test_keys_with_collection(t *testing.T) {
 
 func Test_keys_with_collection_and_map(t *testing.T) {
 	given := []string{"*.*"}
-	expect := []string{"*.big", "*.small"}
+	expect := []string{"0.big", "0.small"}
 	value := support.NewValue(support.NewCollection(support.NewMap(map[string]string{"big": "mule", "small": "black"})))
 	result := support.GetSearchableKeys(given, value)
 	equalStrings(t, expect, result)

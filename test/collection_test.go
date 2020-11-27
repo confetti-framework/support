@@ -71,7 +71,7 @@ func Test_collection_push_value(t *testing.T) {
 func Test_collection_set_by_invalid_key(t *testing.T) {
 	data := support.NewCollection([]string{})
 	data, err := data.SetE("invalid_key", support.NewValue("apple_pear"))
-	require.EqualError(t, err, "key 'invalid_key' can only begin with an asterisk")
+	require.EqualError(t, err, "key 'invalid_key' can only begin with an asterisk or number")
 	require.Equal(t, support.NewCollection([]string{}), data)
 }
 
@@ -157,12 +157,12 @@ func Test_collection_only_nothing(t *testing.T) {
 
 func Test_collection_only_with_asterisk(t *testing.T) {
 	data := support.NewCollection("wolf")
-	require.Equal(t, []interface{}{[]interface{}{"wolf"}}, data.Only("*").Raw())
+	require.Equal(t, []interface{}{"wolf"}, data.Only("*").Raw())
 }
 
 func Test_collection_only_with_multiple_values(t *testing.T) {
 	data := support.NewCollection("wolf", "lamb")
-	require.Equal(t, []interface{}{[]interface{}{"wolf", "lamb"}}, data.Only("*").Raw())
+	require.Equal(t, []interface{}{"wolf", "lamb"}, data.Only("*").Raw())
 }
 
 func Test_collection_only_with_map(t *testing.T) {
