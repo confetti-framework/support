@@ -155,18 +155,18 @@ func (c Collection) Only(keys ...string) Collection {
 	return result
 }
 
-func (c Collection) OnlyE(keys ...string) (Collection, error) {
+func (c Collection) OnlyE(expectedKeys ...string) (Collection, error) {
 	result := Collection{}
 	var err error
 
-	verboseKeys, settableKeys := GetSearchableKeys(keys, NewValue(c))
-	for i, verboseKey := range verboseKeys {
-		nestedValue, err := c.GetE(verboseKey)
+	keys := GetSearchableKeys(expectedKeys, NewValue(c))
+	for _, key := range keys {
+		nestedValue, err := c.GetE(key.Searchable())
 		if errors.Is(err, InvalidCollectionKeyError) {
 			return result, errors.Wrap(err, "invalid only key on collection")
 		}
 		if err == nil {
-			result, err = result.SetE(settableKeys[i], nestedValue)
+			result, err = result.SetE(key.Searchable(), nestedValue)
 		}
 	}
 

@@ -143,15 +143,15 @@ func (m Map) Only(keys ...string) Map {
 	return result
 }
 
-func (m Map) OnlyE(keys ...string) (Map, error) {
+func (m Map) OnlyE(originKeys ...string) (Map, error) {
 	result := Map{}
 	var err error
 
-	verboseKeys, settableKeys := GetSearchableKeys(keys, NewValue(m))
-	for i, verboseKey := range verboseKeys {
-		item, err := m.GetE(verboseKey)
+	keys := GetSearchableKeys(originKeys, NewValue(m))
+	for _, key := range keys {
+		item, err := m.GetE(key.Searchable())
 		if err == nil {
-			result, err = result.SetE(settableKeys[i], item)
+			result, err = result.SetE(key.Searchable(), item)
 		}
 	}
 

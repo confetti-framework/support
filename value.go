@@ -317,64 +317,48 @@ func (v Value) OnlyE(keys ...string) (Value, error) {
 }
 
 // convert keys with an asterisk to usable keys
-func GetSearchableKeys(originKeys []string, value Value) ([]string, []string) {
-	// keys where collection key is a number
-	verboseKeys := []string{}
-	// keys where collection key is an asterisks
-	settableKeys := []string{}
+func GetSearchableKeys(originKeys []string, value Value) []Key {
+	var result []Key
 
-	for _, key := range originKeys {
-		nestedVerboseKeys, nestedSettableKeys := GetSearchableKeysByOneKey(key, value)
-		verboseKeys = append(verboseKeys, nestedVerboseKeys...)
-		settableKeys = append(settableKeys, nestedSettableKeys...)
+	for _, originKey := range originKeys {
+		keys := GetSearchableKeysByOneKey(originKey, value)
+		result = append(result, keys...)
 	}
-	return verboseKeys, settableKeys
+	return result
 }
 
 // convert key with an asterisk to usable keys
-func GetSearchableKeysByOneKey(originKey string, input Value) ([]string, []string) {
+func GetSearchableKeysByOneKey(originKey string, input Value) []Key {
 	if !strings.Contains(originKey, "*") {
-		return []string{originKey}, []string{originKey}
+		return []Key{NewKey(originKey)}
 	}
 
 	// keys where collection key is a number
-	verboseKeys := []string{}
-	// keys where collection key is an asterisks
-	settableKeys := []string{}
+	var keys []Key
 
 	current, rest := splitKey(originKey)
 	switch source := input.source.(type) {
 	case Map:
 		for realKey, nestedValue := range source {
 			if current == realKey || current == "*" {
-				nestedVerboseKeys, nestedSettableKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
-				for i, nestedKey := range nestedVerboseKeys {
-					verboseKeys = append(verboseKeys, getFullRealKey(realKey, nestedKey))
-					settableKeys = append(settableKeys, getFullRealKey(realKey, nestedSettableKeys[i]))
+				nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
+				for _, nestedKey := range nestedKeys {
+					keys = append(keys, nestedKey.Wrap(realKey, realKey))
 				}
 			}
 		}
 	case Collection:
 		for realKey, nestedValue := range source {
-			nestedVerboseKeys, nestedSettableKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
-			for i, nestedKey := range nestedVerboseKeys {
-				fullRealKey := getFullRealKey(strconv.Itoa(realKey), nestedKey)
-				if !containsString(verboseKeys, fullRealKey) {
-					verboseKeys = append(verboseKeys, fullRealKey)
-					settableKeys = append(settableKeys, getFullRealKey("*", nestedSettableKeys[i]))
-				}
+			nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
+			for _, nestedKey := range nestedKeys {
+				// if !containsString(verboseKeys, fullRealKey) {
+				keys = append(keys, nestedKey.Wrap(strconv.Itoa(realKey), "*"))
+				// }
 			}
 		}
 	}
 
-	return verboseKeys, settableKeys
-}
-
-func getFullRealKey(realKey string, nestedKey string) string {
-	if nestedKey == "" {
-		return realKey
-	}
-	return realKey + "." + nestedKey
+	return keys
 }
 
 func containsString(strings []string, expect string) bool {
