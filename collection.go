@@ -159,14 +159,14 @@ func (c Collection) OnlyE(keys ...string) (Collection, error) {
 	result := Collection{}
 	var err error
 
-	realKeys := GetSearchableKeys(keys, NewValue(c))
-	for _, key := range realKeys {
-		nestedValue, err := c.GetE(key)
+	verboseKeys, settableKeys := GetSearchableKeys(keys, NewValue(c))
+	for i, verboseKey := range verboseKeys {
+		nestedValue, err := c.GetE(verboseKey)
 		if errors.Is(err, InvalidCollectionKeyError) {
 			return result, errors.Wrap(err, "invalid only key on collection")
 		}
 		if err == nil {
-			result, err = result.SetE(key, nestedValue)
+			result, err = result.SetE(settableKeys[i], nestedValue)
 		}
 	}
 
