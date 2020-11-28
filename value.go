@@ -320,13 +320,13 @@ func (v Value) OnlyE(keys ...string) (Value, error) {
 func GetSearchableKeys(originKeys []string, value Value) []string {
 	keys := []string{}
 	for _, key := range originKeys {
-		keys = append(keys, getSearchableByOneKey(key, value)...)
+		keys = append(keys, GetSearchableByOneKey(key, value)...)
 	}
 	return keys
 }
 
 // convert key with an asterisk to usable keys
-func getSearchableByOneKey(originKey string, input Value) []string {
+func GetSearchableByOneKey(originKey string, input Value) []string {
 	if !strings.Contains(originKey, "*") {
 		return []string{originKey}
 	}
@@ -337,7 +337,7 @@ func getSearchableByOneKey(originKey string, input Value) []string {
 	case Map:
 		for realKey, nestedValue := range source {
 			if current == realKey || current == "*" {
-				nestedKeys := getSearchableByOneKey(joinRest(rest), nestedValue)
+				nestedKeys := GetSearchableByOneKey(joinRest(rest), nestedValue)
 				for _, nestedKey := range nestedKeys {
 					keys = append(keys, getFullRealKey(realKey, nestedKey))
 				}
@@ -345,7 +345,7 @@ func getSearchableByOneKey(originKey string, input Value) []string {
 		}
 	case Collection:
 		for realKey, nestedValue := range source {
-			nestedKeys := getSearchableByOneKey(joinRest(rest), nestedValue)
+			nestedKeys := GetSearchableByOneKey(joinRest(rest), nestedValue)
 			for _, nestedKey := range nestedKeys {
 				fullRealKey := getFullRealKey(strconv.Itoa(realKey), nestedKey)
 				if !containsString(keys, fullRealKey) {
