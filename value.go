@@ -321,35 +321,46 @@ func GetSearchableKeys(originKeys []string, value Value) []Key {
 	var result []Key
 
 	for _, originKey := range originKeys {
-		keys := GetSearchableKeysByOneKey(originKey, value)
+		keys := GetKeysByOneKey(originKey, value)
 		result = append(result, keys...)
 	}
 	return result
 }
 
 // convert key with an asterisk to usable keys
-func GetSearchableKeysByOneKey(originKey string, input Value) []Key {
+func GetKeysByOneKey(originKey string, input Value) []Key {
 	var keys []Key
 	if !strings.Contains(originKey, "*") {
 		return append(keys, originKey)
 	}
 
-	current, rest := splitKey(originKey)
 	switch source := input.source.(type) {
 	case Map:
-		for realKey, nestedValue := range source {
-			if current == realKey || current == "*" {
-				nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
-				keys = appendNestedKeys(keys, nestedKeys, realKey)
-			}
-		}
+		keys = getKeysByMap(keys, source, originKey)
 	case Collection:
-		for realKey, nestedValue := range source {
-			nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
-			keys = appendNestedKeys(keys, nestedKeys, strconv.Itoa(realKey))
-		}
+		keys = getKeysByCollection(keys, source, originKey)
 	}
 
+	return keys
+}
+
+func getKeysByCollection(keys []Key, source Collection, originKey string) []Key {
+	_, rest := splitKey(originKey)
+	for realKey, nestedValue := range source {
+		nestedKeys := GetKeysByOneKey(joinRest(rest), nestedValue)
+		keys = appendNestedKeys(keys, nestedKeys, strconv.Itoa(realKey))
+	}
+	return keys
+}
+
+func getKeysByMap(keys []Key, source Map, originKey string) []Key {
+	current, rest := splitKey(originKey)
+	for realKey, nestedValue := range source {
+		if current == realKey || current == "*" {
+			nestedKeys := GetKeysByOneKey(joinRest(rest), nestedValue)
+			keys = appendNestedKeys(keys, nestedKeys, realKey)
+		}
+	}
 	return keys
 }
 
