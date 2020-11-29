@@ -81,7 +81,8 @@ func (m Map) GetE(key string) (Value, error) {
 					collection = collection.Push(nestedValue)
 				}
 			default:
-				panic("invalid type of nested value: " + Name(nestedValues))
+				// If there are no keys to search further, the nested value is the final value
+				collection = collection.Push(nestedValueRaw)
 			}
 		}
 
