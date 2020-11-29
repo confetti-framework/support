@@ -329,12 +329,10 @@ func GetSearchableKeys(originKeys []string, value Value) []Key {
 
 // convert key with an asterisk to usable keys
 func GetSearchableKeysByOneKey(originKey string, input Value) []Key {
-	if !strings.Contains(originKey, "*") {
-		return []Key{NewKey(originKey)}
-	}
-
-	// keys where collection key is a number
 	var keys []Key
+	if !strings.Contains(originKey, "*") {
+		return append(keys, originKey)
+	}
 
 	current, rest := splitKey(originKey)
 	switch source := input.source.(type) {
@@ -342,30 +340,22 @@ func GetSearchableKeysByOneKey(originKey string, input Value) []Key {
 		for realKey, nestedValue := range source {
 			if current == realKey || current == "*" {
 				nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
-				for _, nestedKey := range nestedKeys {
-					keys = append(keys, nestedKey.Wrap(realKey, realKey))
-				}
+				keys = appendNestedKeys(keys, nestedKeys, realKey)
 			}
 		}
 	case Collection:
 		for realKey, nestedValue := range source {
 			nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
-			for _, nestedKey := range nestedKeys {
-				// if !containsString(verboseKeys, fullRealKey) {
-				keys = append(keys, nestedKey.Wrap(strconv.Itoa(realKey), "*"))
-				// }
-			}
+			keys = appendNestedKeys(keys, nestedKeys, strconv.Itoa(realKey))
 		}
 	}
 
 	return keys
 }
 
-func containsString(strings []string, expect string) bool {
-	for _, s := range strings {
-		if s == expect {
-			return true
-		}
+func appendNestedKeys(keys, nestedKeys []Key, realKey string) []Key {
+	for _, nestedKey := range nestedKeys {
+		keys = append(keys, PrefixKey(realKey, nestedKey))
 	}
-	return false
+	return keys
 }

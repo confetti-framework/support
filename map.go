@@ -149,9 +149,9 @@ func (m Map) OnlyE(originKeys ...string) (Map, error) {
 
 	keys := GetSearchableKeys(originKeys, NewValue(m))
 	for _, key := range keys {
-		item, err := m.GetE(key.Searchable())
+		item, err := m.GetE(key)
 		if err == nil {
-			result, err = result.SetE(key.Searchable(), item)
+			result, err = result.SetE(key, item)
 		}
 	}
 
