@@ -20,8 +20,3 @@ func Test_collection_only_from_value(t *testing.T) {
 	value := support.NewValue([]string{"salamander", "koala"})
 	require.Equal(t, []interface{}{"salamander", "koala"}, value.Only("*").Raw())
 }
-
-func Test_collection_only_multiple_keys_one_value(t *testing.T) {
-	value := support.NewValue([]string{"salamander", "koala"})
-	require.Equal(t, []interface{}{"salamander", "koala"}, value.Only("*", "0").Raw())
-}
