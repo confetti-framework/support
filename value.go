@@ -321,14 +321,14 @@ func GetSearchableKeys(originKeys []string, value Value) []Key {
 	var result []Key
 
 	for _, originKey := range originKeys {
-		keys := GetKeysByOneKey(originKey, value)
+		keys := GetSearchableKeysByOneKey(originKey, value)
 		result = append(result, keys...)
 	}
 	return result
 }
 
 // convert key with an asterisk to usable keys
-func GetKeysByOneKey(originKey string, input Value) []Key {
+func GetSearchableKeysByOneKey(originKey string, input Value) []Key {
 	var keys []Key
 	if !strings.Contains(originKey, "*") {
 		return append(keys, originKey)
@@ -347,7 +347,7 @@ func GetKeysByOneKey(originKey string, input Value) []Key {
 func getKeysByCollection(keys []Key, source Collection, originKey string) []Key {
 	_, rest := splitKey(originKey)
 	for realKey, nestedValue := range source {
-		nestedKeys := GetKeysByOneKey(joinRest(rest), nestedValue)
+		nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
 		keys = appendNestedKeys(keys, nestedKeys, strconv.Itoa(realKey))
 	}
 	return keys
@@ -357,7 +357,7 @@ func getKeysByMap(keys []Key, source Map, originKey string) []Key {
 	current, rest := splitKey(originKey)
 	for realKey, nestedValue := range source {
 		if current == realKey || current == "*" {
-			nestedKeys := GetKeysByOneKey(joinRest(rest), nestedValue)
+			nestedKeys := GetSearchableKeysByOneKey(joinRest(rest), nestedValue)
 			keys = appendNestedKeys(keys, nestedKeys, realKey)
 		}
 	}
