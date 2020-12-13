@@ -10,3 +10,12 @@ func UpperFirst(input string) string {
 	tmp[0] = unicode.ToUpper(tmp[0])
 	return string(tmp)
 }
+
+func InSlice(input interface{}, expects ...interface{}) bool {
+	for _, expect := range expects {
+		if input == expect {
+			return true
+		}
+	}
+	return false
+}
