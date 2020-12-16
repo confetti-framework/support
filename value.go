@@ -234,7 +234,7 @@ func (v Value) Bool() bool {
 }
 
 func (v Value) Filled() bool {
-	return v.source != nil && v.source != ""
+	return !(v.source == nil || len(v.Collection()) == 0 || v.source == "")
 }
 
 func (v Value) Empty() bool {
