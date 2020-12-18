@@ -1,6 +1,8 @@
 package support
 
 import (
+	"github.com/lanvard/errors"
+	"github.com/spf13/cast"
 	"reflect"
 )
 
@@ -27,7 +29,11 @@ func NewMapE(itemsRange ...interface{}) (Map, error) {
 
 		for _, key := range v.MapKeys() {
 			value := v.MapIndex(key).Interface()
-			result[key.String()] = NewValue(value)
+			key, err := cast.ToStringE(key.Interface())
+			if err != nil {
+				return nil, errors.WithStack(errors.Wrap(err, "invalid key in map"))
+			}
+			result[key] = NewValue(value)
 		}
 	}
 

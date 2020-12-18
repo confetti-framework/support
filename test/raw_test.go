@@ -62,6 +62,23 @@ func Test_raw_from_map_with_strings(t *testing.T) {
 	require.Equal(t, map[string]interface{}{"chair": "blue", "table": "green"}, actual)
 }
 
+func Test_raw_from_map_with_number_as_key(t *testing.T) {
+	actual := support.NewMap(map[int]string{
+		1: "blue",
+		2: "green",
+	}).Raw()
+
+	require.Equal(t, map[string]interface{}{"1": "blue", "2": "green"}, actual)
+}
+
+func Test_raw_from_map_with_unknown_value_as_key(t *testing.T) {
+	_, err := support.NewMapE(map[interface{}]string{
+		testStruct{}: "blue",
+	})
+
+	require.EqualError(t, err, "invalid key in map: unable to cast test.testStruct{} of type test.testStruct to string")
+}
+
 func Test_raw_from_value_with_collection_and_map(t *testing.T) {
 	actual := support.NewValue(
 		support.NewCollection(
