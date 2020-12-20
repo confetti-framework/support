@@ -174,8 +174,8 @@ func (v Value) StringE() (string, error) {
 	return result, err
 }
 
-func (v Value) Number() int {
-	values, err := v.NumberE()
+func (v Value) Int() int {
+	values, err := v.IntE()
 	if err != nil {
 		panic(err)
 	}
@@ -183,15 +183,15 @@ func (v Value) Number() int {
 	return values
 }
 
-func (v Value) NumberE() (int, error) {
+func (v Value) IntE() (int, error) {
 	var result int
 	var err error
 
 	switch source := v.source.(type) {
 	case Collection:
-		result, err = source.First().NumberE()
+		result, err = source.First().IntE()
 	case Map:
-		result, err = source.First().NumberE()
+		result, err = source.First().IntE()
 	default:
 		result, err = cast.ToIntE(source)
 	}

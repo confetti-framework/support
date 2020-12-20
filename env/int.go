@@ -11,7 +11,7 @@ func Int(search string) int {
 		panic("env " + search + " not found")
 	}
 
-	return support.NewValue(env).Number()
+	return support.NewValue(env).Int()
 }
 
 func IntOr(search string, def int) int {
@@ -20,7 +20,7 @@ func IntOr(search string, def int) int {
 		return def
 	}
 
-	result, err := support.NewValue(env).NumberE()
+	result, err := support.NewValue(env).IntE()
 	if err != nil {
 		return def
 	}
