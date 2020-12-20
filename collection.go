@@ -17,7 +17,7 @@ func NewCollection(items ...interface{}) Collection {
 			continue
 		}
 
-		switch Type(item) {
+		switch Kind(item) {
 		case reflect.Array, reflect.Slice:
 			s := reflect.ValueOf(item)
 			for i := 0; i < s.Len(); i++ {
@@ -66,7 +66,7 @@ func (c Collection) GetE(key string) (Value, error) {
 		flattenMap := Map{}
 
 		for _, value := range c {
-			switch Type(value.Source()) {
+			switch Kind(value.Source()) {
 			case reflect.Slice, reflect.Array:
 				flattenCollection = append(flattenCollection, value.Source().(Collection)...)
 			case reflect.Map:

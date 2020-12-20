@@ -28,7 +28,7 @@ func NewValueE(val interface{}) (Value, error) {
 		return val.(Value), nil
 	}
 
-	switch Type(val) {
+	switch Kind(val) {
 	case reflect.Slice, reflect.Array:
 		result := NewCollection(val)
 		return Value{result}, nil
@@ -106,7 +106,7 @@ func (v Value) GetE(key string) (Value, error) {
 		}
 		return value.GetE(nextKey)
 	default:
-		switch Type(source) {
+		switch Kind(source) {
 		case reflect.Struct:
 			val := reflect.ValueOf(source).FieldByName(currentKey)
 			if val.IsValid() {
@@ -145,7 +145,7 @@ func (v Value) MapE() (Map, error) {
 	case Map:
 		return v.source.(Map), nil
 	default:
-		return nil, errors.New("can't create map from reflect.Kind " + strconv.Itoa(int(Type(valueType))))
+		return nil, errors.New("can't create map from reflect.Kind " + strconv.Itoa(int(Kind(valueType))))
 	}
 }
 
@@ -274,7 +274,7 @@ func (v Value) SetE(key string, input interface{}) (Value, error) {
 		v.source = NewCollection()
 	}
 	if _, isCollection := v.source.(Collection); !isCollection && currentKey == "*" {
-		return v, CanNotAppendValueError.Wrap("can not append value on '%s'", Type(v.source))
+		return v, CanNotAppendValueError.Wrap("can not append value on '%s'", Kind(v.source))
 	}
 	// if value is nil, create a map to set the value
 	if v.source == nil {

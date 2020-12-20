@@ -6,15 +6,15 @@ import (
 )
 
 func Name(element interface{}) string {
-	if Type(element) == reflect.String {
+	if Kind(element) == reflect.String {
 		return element.(string)
 	}
 
-	if Type(element) == reflect.Struct {
+	if Kind(element) == reflect.Struct {
 		return reflect.TypeOf(element).String()
 	}
 
-	if Type(element) == reflect.Ptr && element == nil {
+	if Kind(element) == reflect.Ptr && element == nil {
 		panic("Nil value found. To bind an interface, use the following syntax: (*INTERFACE)(nil)")
 	}
 
@@ -30,7 +30,7 @@ func Package(element interface{}) string {
 	return reflect.TypeOf(element).Elem().PkgPath()
 }
 
-func Type(element interface{}) reflect.Kind {
+func Kind(element interface{}) reflect.Kind {
 	if element == nil {
 		return reflect.TypeOf(&element).Kind()
 	}

@@ -26,11 +26,11 @@ func Test_name_from_string(t *testing.T) {
 }
 
 func Test_type_from_interface(t *testing.T) {
-	reflectType := support.Type((*testInterface)(nil))
+	reflectType := support.Kind((*testInterface)(nil))
 	require.Equal(t, reflect.Ptr, reflectType)
 }
 
 func Test_type_from_string(t *testing.T) {
-	reflectType := support.Type("string")
+	reflectType := support.Kind("string")
 	require.Equal(t, reflect.String, reflectType)
 }
