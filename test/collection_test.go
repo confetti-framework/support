@@ -1,7 +1,7 @@
 package test
 
 import (
-	"github.com/lanvard/support"
+	"github.com/confetti-framework/support"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"

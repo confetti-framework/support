@@ -1,7 +1,7 @@
 package support
 
 import (
-	"github.com/lanvard/errors"
+	"github.com/confetti-framework/errors"
 	"github.com/spf13/cast"
 	"reflect"
 )

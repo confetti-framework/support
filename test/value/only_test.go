@@ -1,7 +1,7 @@
 package value
 
 import (
-	"github.com/lanvard/support"
+	"github.com/confetti-framework/support"
 	"github.com/stretchr/testify/require"
 	"testing"
 )

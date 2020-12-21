@@ -1,7 +1,7 @@
 package env
 
 import (
-	"github.com/lanvard/support"
+	"github.com/confetti-framework/support"
 	"os"
 )
 

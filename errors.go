@@ -1,6 +1,6 @@
 package support
 
-import "github.com/lanvard/errors"
+import "github.com/confetti-framework/errors"
 
 var InvalidCollectionKeyError = errors.New("")
 var CanNotCreateMapError = errors.New("can not create map")
