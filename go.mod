@@ -3,15 +3,9 @@ module github.com/confetti-framework/support
 go 1.15
 
 require (
+	github.com/confetti-framework/errors v0.11.0-rc.1
 	github.com/joho/godotenv v1.3.0
-	github.com/confetti-framework/errors v0.9.1
 	github.com/spf13/cast v1.3.1
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/text v0.3.2
-	gopkg.in/yaml.v2 v2.2.2 // indirect
-)
-
-replace (
-	github.com/confetti-framework/errors v0.9.1 => ../errors
-	github.com/confetti-framework/syslog v0.0.0-20201006215111-98d4d91dbaa8 => ../syslog
 )
