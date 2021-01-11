@@ -250,7 +250,7 @@ func (m Map) HasAny(keys ...string) bool {
 
 	for _, key := range keys {
 		result, err := m.GetE(key)
-		if err != nil && !result.Empty() {
+		if err == nil && !result.Empty() {
 			return true
 		}
 	}

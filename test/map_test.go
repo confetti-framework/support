@@ -117,6 +117,11 @@ func Test_map_has_any_with_one_non_present_key(t *testing.T) {
 	require.False(t, data.HasAny("age"))
 }
 
+func Test_map_has_any_with_one_present_key(t *testing.T) {
+	data := support.NewMap(map[string]string{"username": "apple_pear", "password": "34a@#dQd"})
+	require.True(t, data.HasAny("username"))
+}
+
 func Test_map_missing_with_no_key(t *testing.T) {
 	data := support.NewMap(map[string]string{"username": "apple_pear"})
 	require.False(t, data.Missing(""))
