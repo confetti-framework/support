@@ -2,15 +2,36 @@ package support
 
 import (
 	"fmt"
+	"github.com/spf13/cast"
 	"reflect"
 )
 
 func Name(element interface{}) string {
-	if Kind(element) == reflect.String {
-		return element.(string)
-	}
-
-	if Kind(element) == reflect.Struct {
+	switch Kind(element) {
+	case reflect.String:
+		if element == "" {
+			return "string"
+		}
+		return cast.ToString(element)
+	case reflect.Int:
+		if element == 0 {
+			return "int"
+		}
+		return cast.ToString(element)
+	case reflect.Bool:
+		return "bool"
+	case reflect.Float64:
+		if element == 0. {
+			return "float64"
+		}
+		return cast.ToString(element)
+	case reflect.Float32:
+		var emptyFloat float32 = 0
+		if element == emptyFloat {
+			return "float32"
+		}
+		return cast.ToString(element)
+	case reflect.Struct:
 		return reflect.TypeOf(element).String()
 	}
 
