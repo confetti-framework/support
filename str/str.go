@@ -61,19 +61,46 @@ func AfterLast(subject string, search string) string {
 	return result
 }
 
+// Get the portion of a string before the first occurrence of a given value.
 func Before(subject string, search string) string {
-	// TODO
-	return ""
+	l := len(search)
+	if l == 0 {
+		return subject
+	}
+
+	byteIndex := strings.Index(subject, search)
+	if byteIndex == -1 {
+		return subject
+	}
+
+	byteSubject := []byte(subject)
+
+	result := string(byteSubject[:byteIndex])
+	return result
 }
 
 func BeforeLast(subject string, search string) string {
-	// TODO
-	return ""
+	l := len(search)
+	if l == 0 {
+		return subject
+	}
+
+	byteIndex := strings.LastIndex(subject, search)
+	if byteIndex == -1 {
+		return subject
+	}
+
+	byteSubject := []byte(subject)
+
+	result := string(byteSubject[:byteIndex])
+	return result
 }
 
 func Between(subject string, from string, to string) string {
-	// TODO
-	return ""
+	if len(from) == 0 || len(to) == 0 {
+		return subject
+	}
+	return BeforeLast(After(subject, from), to)
 }
 
 func Contains(haystack string, needle string) bool {
