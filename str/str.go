@@ -1,6 +1,9 @@
 package str
 
-import "unicode"
+import (
+	"strings"
+	"unicode"
+)
 
 func UpperFirst(input string) string {
 	if len(input) == 0 {
@@ -20,9 +23,22 @@ func InSlice(input interface{}, expects ...interface{}) bool {
 	return false
 }
 
+// Return the remainder of a string after the first occurrence of a given value.
 func After(subject string, search string) string {
 	// TODO
-	return ""
+	l := len(search)
+	if l == 0 {
+		return subject
+	}
+
+	strs := strings.Index(subject, search)
+	if strs == -1 {
+		return subject
+	}
+	runes := []rune(subject)
+
+	result := string(runes[strs + l:])
+	return result
 }
 
 func AfterLast(subject string, search string) string {
@@ -155,6 +171,11 @@ func StartsWith(haystack string, needle string) string {
 }
 
 func Studly(value string) string {
+	// TODO
+	return ""
+}
+
+func UcFirst(value string) string {
 	// TODO
 	return ""
 }
