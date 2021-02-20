@@ -31,13 +31,15 @@ func After(subject string, search string) string {
 		return subject
 	}
 
-	strs := strings.Index(subject, search)
-	if strs == -1 {
+
+	byteIndex := strings.Index(subject, search)
+	if byteIndex == -1 {
 		return subject
 	}
-	runes := []rune(subject)
+	byteSubject := []byte(subject)
+	byteSearch := []byte(search)
 
-	result := string(runes[strs + l:])
+	result := string(byteSubject[byteIndex+ len(byteSearch):])
 	return result
 }
 
