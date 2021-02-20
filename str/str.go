@@ -25,17 +25,16 @@ func InSlice(input interface{}, expects ...interface{}) bool {
 
 // Return the remainder of a string after the first occurrence of a given value.
 func After(subject string, search string) string {
-	// TODO
 	l := len(search)
 	if l == 0 {
 		return subject
 	}
 
-
 	byteIndex := strings.Index(subject, search)
 	if byteIndex == -1 {
 		return subject
 	}
+
 	byteSubject := []byte(subject)
 	byteSearch := []byte(search)
 
@@ -43,9 +42,23 @@ func After(subject string, search string) string {
 	return result
 }
 
+// Return the remainder of a string after the last occurrence of a given value.
 func AfterLast(subject string, search string) string {
-	// TODO
-	return ""
+	l := len(search)
+	if l == 0 {
+		return subject
+	}
+
+	byteIndex := strings.LastIndex(subject, search)
+	if byteIndex == -1 {
+		return subject
+	}
+
+	byteSubject := []byte(subject)
+	byteSearch := []byte(search)
+
+	result := string(byteSubject[byteIndex+ len(byteSearch):])
+	return result
 }
 
 func Before(subject string, search string) string {
