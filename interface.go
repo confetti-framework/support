@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cast"
 	"reflect"
+	"strings"
 )
 
 func Name(element interface{}) string {
@@ -39,7 +40,8 @@ func Name(element interface{}) string {
 		panic("Nil value found. To bind an interface, use the following syntax: (*INTERFACE)(nil)")
 	}
 
-	return reflect.TypeOf(element).Elem().String()
+	// Get name of element and ignore pointer
+	return strings.TrimLeft(fmt.Sprintf("%T", element), "*")
 }
 
 func Package(element interface{}) string {
