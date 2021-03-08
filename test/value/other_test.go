@@ -73,3 +73,13 @@ func Test_get_map_from_string_in_value(t *testing.T) {
 		value.Map()
 	})
 }
+
+func Test_get_string_from_collection_in_value(t *testing.T) {
+	value := support.NewValue([]string{"12"})
+	require.Equal(t, "12", value.String())
+}
+
+func Test_get_string_from_map_in_value(t *testing.T) {
+	value := support.NewValue(map[string]string{"1": "12"})
+	require.Equal(t, "12", value.String())
+}
