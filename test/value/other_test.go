@@ -56,3 +56,8 @@ func Test_get_from_int(t *testing.T) {
 		value.Get("field").Raw()
 	})
 }
+
+func Test_get_collection_from_map_in_value(t *testing.T) {
+	value := support.NewValue(map[string]string{"1": "12"})
+	require.Equal(t, "12", value.Collection().First().Raw())
+}
