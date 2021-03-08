@@ -250,4 +250,16 @@ func Test_map_push_collection_existing_key(t *testing.T) {
 	)
 }
 
+func Test_map_delete_value(t *testing.T) {
+	value := support.NewMap().Push("first", "value")
+	value.Delete("first")
+	require.Equal(t, support.Map{}, value)
+}
+
+func Test_map_merge_map(t *testing.T) {
+	value := support.NewMap().Push("first", "value1")
+	value.Merge(support.NewMap(map[string]string{"second": "value2"}))
+	require.Equal(t, map[string]interface{}{"first": "value1", "second": "value2"}, value.Raw())
+}
+
 type mockUser struct{}
