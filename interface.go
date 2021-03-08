@@ -45,7 +45,6 @@ func Name(element interface{}) string {
 }
 
 func Package(element interface{}) string {
-
 	if element == nil {
 		return reflect.TypeOf(&element).Elem().PkgPath()
 	}

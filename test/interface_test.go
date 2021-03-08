@@ -72,7 +72,24 @@ func Test_type_from_interface(t *testing.T) {
 	require.Equal(t, reflect.Ptr, reflectType)
 }
 
+func Test_type_from_collection(t *testing.T) {
+	reflectType := support.Kind(support.NewCollection("v1"))
+	require.Equal(t, reflect.Slice, reflectType)
+}
+
 func Test_type_from_string(t *testing.T) {
 	reflectType := support.Kind("string")
 	require.Equal(t, reflect.String, reflectType)
+}
+
+func Test_package_from_string(t *testing.T) {
+	require.Panics(t, func() {
+		support.Package("string")
+	})
+}
+
+func Test_package_from_nil(t *testing.T) {
+	require.NotPanics(t, func() {
+		support.Package(nil)
+	})
 }
