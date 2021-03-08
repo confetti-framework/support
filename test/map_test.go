@@ -201,4 +201,22 @@ func Test_set_collection_on_map(t *testing.T) {
 	require.Equal(t, map[string]interface{}{"names": []interface{}{"Jaap"}}, data.Raw())
 }
 
+func Test_map_from_string(t *testing.T) {
+	require.Panics(t, func() {
+		support.NewMap("string")
+	})
+}
+
+func Test_map_get_from_collection_with_invalid_key(t *testing.T) {
+	require.Panics(t, func() {
+		v := map[string]interface{}{"key": "st"}
+		support.NewMap(v).Get("*.invalid")
+	})
+}
+
+func Test_map_from_custom_with_string(t *testing.T) {
+	v := map[string]interface{}{"firstkey": map[string]string{"valid": "dog"}}
+	require.Equal(t, "dog", support.NewMap(v).Get("*.valid").String())
+}
+
 type mockUser struct{}
