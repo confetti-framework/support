@@ -6,12 +6,17 @@ import (
 	"testing"
 )
 
-var mockConst = func() {}
+type mockEmptyStruct struct{}
+type mockStruct struct {
+	Field string
+}
+
+var mockFunc = func() {}
 
 func Test_new_invalid_value(t *testing.T) {
 	require.Panics(t, func() {
 		support.NewValue(map[interface{}]string{
-			mockConst: "val",
+			mockFunc: "val",
 		})
 	})
 }
@@ -30,5 +35,17 @@ func Test_get_from_invalid_value_with_asterisks(t *testing.T) {
 	value := support.NewValue("non collection/value")
 	require.Panics(t, func() {
 		value.Get("*").Raw()
+	})
+}
+
+func Test_get_from_empty_struct(t *testing.T) {
+	value := support.NewValue(mockStruct{"fieldvalue"})
+	require.Equal(t, "fieldvalue", value.Get("Field").Raw())
+}
+
+func Test_get_from_int(t *testing.T) {
+	value := support.NewValue(12)
+	require.Panics(t, func() {
+		value.Get("field").Raw()
 	})
 }
