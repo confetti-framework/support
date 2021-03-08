@@ -66,3 +66,10 @@ func Test_get_collection_from_string_in_value(t *testing.T) {
 	value := support.NewValue("12")
 	require.Equal(t, []interface{}{"12"}, value.Collection().Raw())
 }
+
+func Test_get_map_from_string_in_value(t *testing.T) {
+	value := support.NewValue("12")
+	require.Panics(t, func() {
+		value.Map()
+	})
+}
