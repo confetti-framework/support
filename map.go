@@ -114,14 +114,6 @@ func (m Map) GetE(key string) (Value, error) {
 	}
 }
 
-func getKeyInfo(key string, currentKey string) string {
-	info := ""
-	if currentKey != key {
-		info = " ('" + key + "')"
-	}
-	return info
-}
-
 // SetE sets the key to value by dot notation
 func (m Map) SetE(key string, input interface{}) (Map, error) {
 	currentKey, rest := splitKey(key)
@@ -275,4 +267,12 @@ func (m Map) Filled(keys ...string) bool {
 
 func (m Map) Empty() bool {
 	return len(m) == 0
+}
+
+func getKeyInfo(key string, currentKey string) string {
+	info := ""
+	if currentKey != key {
+		info = " ('" + key + "')"
+	}
+	return info
 }

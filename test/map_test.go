@@ -219,4 +219,35 @@ func Test_map_from_custom_with_string(t *testing.T) {
 	require.Equal(t, "dog", support.NewMap(v).Get("*.valid").String())
 }
 
+func Test_map_push_string(t *testing.T) {
+	newMap := support.NewMap()
+	require.Equal(
+		t,
+		map[string]interface{}{"first": "birth"},
+		newMap.Push("first", "birth").Raw(),
+	)
+}
+
+func Test_map_push_string_existing_key(t *testing.T) {
+	value := support.NewMap()
+	value = value.Push("first", "fish")
+
+	require.Equal(
+		t,
+		map[string]interface{}{"first": "birth"},
+		value.Push("first", "birth").Raw(),
+	)
+}
+
+func Test_map_push_collection_existing_key(t *testing.T) {
+	value := support.NewMap()
+	value = value.Push("first", support.NewCollection("fish"))
+
+	require.Equal(
+		t,
+		map[string]interface{}{"first": []interface{}{"fish", []interface{}{"birth"}}},
+		value.Push("first", support.NewCollection("birth")).Raw(),
+	)
+}
+
 type mockUser struct{}
