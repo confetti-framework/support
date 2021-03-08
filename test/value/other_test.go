@@ -15,3 +15,7 @@ func Test_new_invalid_value(t *testing.T) {
 		})
 	})
 }
+
+func Test_get_collection_from_value_with_asterisks(t *testing.T) {
+	require.Equal(t, []interface{}{"the_value"}, support.NewValue(support.NewCollection([]string{"the_value"})).Get("*").Raw())
+}
