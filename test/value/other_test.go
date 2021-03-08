@@ -69,9 +69,7 @@ func Test_get_collection_from_string_in_value(t *testing.T) {
 
 func Test_get_map_from_string_in_value(t *testing.T) {
 	value := support.NewValue("12")
-	require.Panics(t, func() {
-		value.Map()
-	})
+	require.Panics(t, func() { value.Map() })
 }
 
 func Test_get_string_from_collection_in_value(t *testing.T) {
@@ -82,4 +80,24 @@ func Test_get_string_from_collection_in_value(t *testing.T) {
 func Test_get_string_from_map_in_value(t *testing.T) {
 	value := support.NewValue(map[string]string{"1": "12"})
 	require.Equal(t, "12", value.String())
+}
+
+func Test_get_valid_int_from_value(t *testing.T) {
+	value := support.NewValue(12)
+	require.Equal(t, 12, value.Int())
+}
+
+func Test_get_invalid_int_from_value(t *testing.T) {
+	value := support.NewValue("invalid_int")
+	require.Panics(t, func() { value.Int() })
+}
+
+func Test_get_int_from_collection(t *testing.T) {
+	value := support.NewValue([]int{12})
+	require.Equal(t, 12, value.Int())
+}
+
+func Test_get_int_from_map(t *testing.T) {
+	value := support.NewValue(map[string]int{"first": 12})
+	require.Equal(t, 12, value.Int())
 }
