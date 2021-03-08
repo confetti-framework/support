@@ -262,4 +262,9 @@ func Test_map_merge_map(t *testing.T) {
 	require.Equal(t, map[string]interface{}{"first": "value1", "second": "value2"}, value.Raw())
 }
 
+func Test_map_empty(t *testing.T) {
+	value := support.NewMap().Push("first", "value1")
+	require.False(t, value.Empty())
+}
+
 type mockUser struct{}
