@@ -116,3 +116,8 @@ func Test_filled_empty_collection(t *testing.T) {
 	value := support.NewValue([]string{})
 	require.False(t, value.Filled())
 }
+
+func Test_slit_string(t *testing.T) {
+	value := support.NewValue("val1,val2")
+	require.Equal(t, []interface{}{"val1", "val2"}, value.Split(",").Raw())
+}
