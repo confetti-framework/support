@@ -101,3 +101,8 @@ func Test_get_int_from_map(t *testing.T) {
 	value := support.NewValue(map[string]int{"first": 12})
 	require.Equal(t, 12, value.Int())
 }
+
+func Test_filled_nil(t *testing.T) {
+	value := support.NewValue(nil)
+	require.False(t, value.Filled())
+}
