@@ -175,4 +175,19 @@ func Test_collection_only_with_map_and_key(t *testing.T) {
 	require.Equal(t, []interface{}{map[string]interface{}{"lamp": "wool"}}, data.Only("*.lamp").Raw())
 }
 
+func Test_collection_reverse(t *testing.T) {
+	data := support.NewCollection(map[string]string{"lamp": "wool", "fish": "water"})
+	require.Equal(t, []interface{}{map[string]interface{}{"fish": "water", "lamp": "wool"}}, data.Reverse().Raw())
+}
+
+func Test_collection_not_contains(t *testing.T) {
+	data := support.NewCollection(map[string]string{"lamp": "wool", "fish": "water"})
+	require.False(t, data.Contains("ear"))
+}
+
+func Test_collection_contains(t *testing.T) {
+	data := support.NewCollection(map[string]string{"lamp": "wool", "fish": "water"})
+	require.False(t, data.Contains("lamp"))
+}
+
 var emptyInterface interface{}
