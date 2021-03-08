@@ -39,6 +39,13 @@ func Test_get_from_invalid_value_with_asterisks(t *testing.T) {
 }
 
 func Test_get_from_empty_struct(t *testing.T) {
+	value := support.NewValue(mockEmptyStruct{})
+	require.Panics(t, func() {
+		value.Get("field").Raw()
+	})
+}
+
+func Test_get_from_struct(t *testing.T) {
 	value := support.NewValue(mockStruct{"fieldvalue"})
 	require.Equal(t, "fieldvalue", value.Get("Field").Raw())
 }
