@@ -61,3 +61,8 @@ func Test_get_collection_from_map_in_value(t *testing.T) {
 	value := support.NewValue(map[string]string{"1": "12"})
 	require.Equal(t, "12", value.Collection().First().Raw())
 }
+
+func Test_get_collection_from_string_in_value(t *testing.T) {
+	value := support.NewValue("12")
+	require.Equal(t, []interface{}{"12"}, value.Collection().Raw())
+}
