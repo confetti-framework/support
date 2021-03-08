@@ -106,3 +106,13 @@ func Test_filled_nil(t *testing.T) {
 	value := support.NewValue(nil)
 	require.False(t, value.Filled())
 }
+
+func Test_filled_empty_string(t *testing.T) {
+	value := support.NewValue("")
+	require.False(t, value.Filled())
+}
+
+func Test_filled_empty_collection(t *testing.T) {
+	value := support.NewValue([]string{})
+	require.False(t, value.Filled())
+}
