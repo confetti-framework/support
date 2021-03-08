@@ -121,3 +121,8 @@ func Test_slit_string(t *testing.T) {
 	value := support.NewValue("val1,val2")
 	require.Equal(t, []interface{}{"val1", "val2"}, value.Split(",").Raw())
 }
+
+func Test_set_string(t *testing.T) {
+	value := support.NewValue("val1")
+	require.Equal(t, "val1", value.Set("no_map", "v").Raw())
+}
