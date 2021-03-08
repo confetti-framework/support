@@ -186,8 +186,8 @@ func Test_collection_not_contains(t *testing.T) {
 }
 
 func Test_collection_contains(t *testing.T) {
-	data := support.NewCollection(map[string]string{"lamp": "wool", "fish": "water"})
-	require.False(t, data.Contains("lamp"))
+	data := support.NewCollection("lamp", "water")
+	require.True(t, data.Contains("lamp"))
 }
 
 func Test_collection_len(t *testing.T) {
