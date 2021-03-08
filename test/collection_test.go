@@ -190,4 +190,19 @@ func Test_collection_contains(t *testing.T) {
 	require.False(t, data.Contains("lamp"))
 }
 
+func Test_collection_len(t *testing.T) {
+	data := support.NewCollection("wool", "water")
+	require.Equal(t, 2, data.Len())
+}
+
+func Test_collection_empty(t *testing.T) {
+	data := support.NewCollection()
+	require.True(t, data.Empty())
+}
+
+func Test_collection_not_empty(t *testing.T) {
+	data := support.NewCollection("wool", "water")
+	require.False(t, data.Empty())
+}
+
 var emptyInterface interface{}
