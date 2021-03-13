@@ -27,7 +27,7 @@ func InSlice(input interface{}, expects ...interface{}) bool {
 func After(subject string, search string) string {
 	l := len(search)
 	if l == 0 {
-		return subject
+		return ""
 	}
 
 	byteIndex := strings.Index(subject, search)
@@ -46,7 +46,7 @@ func After(subject string, search string) string {
 func AfterLast(subject string, search string) string {
 	l := len(search)
 	if l == 0 {
-		return subject
+		return ""
 	}
 
 	byteIndex := strings.LastIndex(subject, search)
@@ -104,16 +104,15 @@ func Between(subject string, from string, to string) string {
 }
 
 func Contains(haystack string, needle string) bool {
+	return strings.Index(haystack, needle) == -1
+}
+
+func ContainsFromSlice(haystack string, needle []string) bool {
 	// TODO
 	return false
 }
 
-func ContainsInSlice(haystack string, needle []string) bool {
-	// TODO
-	return false
-}
-
-func ContainsAllInSlice(haystack string, needle []string) bool {
+func ContainsAllFromSlice(haystack string, needle []string) bool {
 	// TODO
 	return false
 }
