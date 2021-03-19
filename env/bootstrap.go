@@ -3,14 +3,14 @@ package env
 import (
 	"github.com/joho/godotenv"
 	"os"
+	"strings"
 )
 
 func init() {
-	root, _ := os.Getwd()
 	defaultEnv := ".env"
 
 	envFile := GetEnvFileByArgs(os.Args, defaultEnv)
-	err := godotenv.Load(root + "/" + envFile)
+	err := godotenv.Load(getFullPath(envFile))
 	if err != nil && envFile != defaultEnv {
 		println("Can't load environments: " + err.Error())
 		os.Exit(1)
@@ -32,4 +32,13 @@ func GetEnvFileByArgs(args []string, def string) string {
 // flagHasValue checks whether a value is available after the flag
 func flagHasValue(i int, args []string) bool {
 	return len(args) > i+1
+}
+
+func getFullPath(file string) string {
+	if strings.HasPrefix(file, "/") {
+		return file
+	}
+
+	root, _ := os.Getwd()
+	return root + "/" + file
 }
