@@ -8,7 +8,7 @@ import (
 func Lang(search string) language.Tag {
 	env, ok := os.LookupEnv(search)
 	if !ok {
-		panic("Enviroment '" + search + "' not found")
+		panic("Environment '" + search + "' not found")
 	}
 
 	return language.Make(env)
