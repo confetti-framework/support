@@ -58,3 +58,16 @@ func Before(input string, search string) string {
 
 	return input[:position]
 }
+
+func BeforeLast(input string, search string) string {
+	if len(search) == 0 {
+		return input
+	}
+	position := strings.LastIndex(input, search)
+
+	if position == -1 {
+		return input
+	}
+
+	return input[:position]
+}
