@@ -35,3 +35,26 @@ func Test_in_slice_with_multiple_one_matched_parameters(t *testing.T) {
 func Test_in_slice_with_integer(t *testing.T) {
 	require.True(t, str.InSlice(1, 0, 1))
 }
+
+func Test_after(t *testing.T) {
+	require.Equal(t, " my name", str.After("This is my name", "This is"))
+	require.Equal(t, "nah", str.After("hannah", "han"))
+	require.Equal(t, "nah", str.After("hannah", "n"))
+	require.Equal(t, "nah", str.After("ééé hannah", "han"))
+	require.Equal(t, "hannah", str.After("hannah", "xxxx"))
+	require.Equal(t, "hannah", str.After("hannah", ""))
+	require.Equal(t, "nah", str.After("han0nah", "0"))
+}
+
+func Test_afterLast(t *testing.T) {
+	require.Equal(t, "tte", str.AfterLast("yvette", "yve"))
+	require.Equal(t, "Controller", str.AfterLast("App\\Http\\Controllers\\Controller", "\\"))
+	require.Equal(t, "e", str.AfterLast("yvette", "t"))
+	require.Equal(t, "e", str.AfterLast("ééé yvette", "t"))
+	require.Equal(t, "foo", str.AfterLast("----foo", "---"))
+	require.Equal(t, "", str.AfterLast("yvette", "tte"))
+	require.Equal(t, "yvette", str.AfterLast("yvette", "xxxx"))
+	require.Equal(t, "yvette", str.AfterLast("yvette", ""))
+	require.Equal(t, "te", str.AfterLast("yv0et0te", "0"))
+}
+

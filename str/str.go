@@ -1,6 +1,9 @@
 package str
 
-import "unicode"
+import (
+	"strings"
+	"unicode"
+)
 
 func UpperFirst(input string) string {
 	if len(input) == 0 {
@@ -18,4 +21,25 @@ func InSlice(input interface{}, expects ...interface{}) bool {
 		}
 	}
 	return false
+}
+
+func After(input string, search string) string {
+	if len(search) == 0 {
+		return input
+	}
+	results := strings.SplitN(input, search, 2)
+	return results[len(results)-1]
+}
+
+func AfterLast(input string, search string) string {
+	if len(search) == 0 {
+		return input
+	}
+	position := strings.LastIndex(input, search)
+
+	if position == -1 {
+		return input
+	}
+
+	return input[position+len(search):]
 }
