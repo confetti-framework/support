@@ -43,3 +43,18 @@ func AfterLast(input string, search string) string {
 
 	return input[position+len(search):]
 }
+
+// TBD: Ascii
+
+func Before(input string, search string) string {
+	if len(search) == 0 {
+		return input
+	}
+	position := strings.Index(input, search)
+
+	if position == -1 {
+		return input
+	}
+
+	return input[:position]
+}

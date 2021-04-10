@@ -58,3 +58,12 @@ func Test_afterLast(t *testing.T) {
 	require.Equal(t, "te", str.AfterLast("yv0et0te", "0"))
 }
 
+func Test_before(t *testing.T) {
+	require.Equal(t, "This is ", str.Before("This is my name", "my name"))
+	require.Equal(t, "han", str.Before("hannah", "nah"))
+	require.Equal(t, "ha", str.Before("hannah", "n"))
+	require.Equal(t, "ééé ", str.Before("ééé hannah", "han"))
+	require.Equal(t, "hannah", str.Before("hannah", "xxxx"))
+	require.Equal(t, "hannah", str.Before("hannah", ""))
+	require.Equal(t, "han", str.Before("han0nah", "0"))
+}
