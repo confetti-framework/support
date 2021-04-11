@@ -25,81 +25,59 @@ func InSlice(input interface{}, expects ...interface{}) bool {
 
 // Return the remainder of a string after the first occurrence of a given value.
 func After(subject string, search string) string {
-	l := len(search)
-	if l == 0 {
-		return ""
-	}
-
-	byteIndex := strings.Index(subject, search)
-	if byteIndex == -1 {
+	if len(search) == 0 {
 		return subject
 	}
-
-	byteSubject := []byte(subject)
-	byteSearch := []byte(search)
-
-	result := string(byteSubject[byteIndex+ len(byteSearch):])
-	return result
+	results := strings.SplitN(subject, search, 2)
+	return results[len(results)-1]
 }
 
 // Return the remainder of a string after the last occurrence of a given value.
 func AfterLast(subject string, search string) string {
-	l := len(search)
-	if l == 0 {
-		return ""
+	if len(search) == 0 {
+		return subject
 	}
+	position := strings.LastIndex(subject, search)
 
-	byteIndex := strings.LastIndex(subject, search)
-	if byteIndex == -1 {
+	if position == -1 {
 		return subject
 	}
 
-	byteSubject := []byte(subject)
-	byteSearch := []byte(search)
-
-	result := string(byteSubject[byteIndex+ len(byteSearch):])
-	return result
+	return subject[position+len(search):]
 }
 
 // Get the portion of a string before the first occurrence of a given value.
 func Before(subject string, search string) string {
-	l := len(search)
-	if l == 0 {
+	if len(search) == 0 {
+		return subject
+	}
+	position := strings.Index(subject, search)
+
+	if position == -1 {
 		return subject
 	}
 
-	byteIndex := strings.Index(subject, search)
-	if byteIndex == -1 {
-		return subject
-	}
-
-	byteSubject := []byte(subject)
-
-	result := string(byteSubject[:byteIndex])
-	return result
+	return subject[:position]
 }
 
 func BeforeLast(subject string, search string) string {
-	l := len(search)
-	if l == 0 {
+	if len(search) == 0 {
+		return subject
+	}
+	position := strings.LastIndex(subject, search)
+
+	if position == -1 {
 		return subject
 	}
 
-	byteIndex := strings.LastIndex(subject, search)
-	if byteIndex == -1 {
-		return subject
-	}
-
-	byteSubject := []byte(subject)
-
-	result := string(byteSubject[:byteIndex])
-	return result
+	return subject[:position]
 }
 
 func Between(subject string, from string, to string) string {
 	if len(from) == 0 || len(to) == 0 {
 		return subject
 	}
+
 	return BeforeLast(After(subject, from), to)
 }
 
