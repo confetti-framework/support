@@ -89,11 +89,20 @@ func Contains(haystack string, needle string) bool {
 	return strings.Contains(haystack, needle)
 }
 
-// func ContainsFromSlice(haystack string, needle []string) bool {
-// 	// TODO
-// 	return false
-// }
-//
+func ContainsFromSlice(haystack string, needles []string) bool {
+	if len(needles) == 0 {
+		return false
+	}
+
+	for _, needle := range needles {
+		if Contains(haystack, needle){
+			return true
+		}
+	}
+
+	return false
+}
+
 // func ContainsAllFromSlice(haystack string, needle []string) bool {
 // 	// TODO
 // 	return false

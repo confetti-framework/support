@@ -105,8 +105,15 @@ func Test_Between(t *testing.T) {
 func Test_Contains(t *testing.T) {
 	require.True(t, str.Contains("taylor", "ylo"))
 	require.True(t, str.Contains("taylor", "taylor"))
-
 	require.False(t, str.Contains("taylor", "xxx"))
 	require.False(t, str.Contains("taylor", ""))
 	require.False(t, str.Contains("", ""))
+}
+
+func Test_ContainsFromSlice(t *testing.T) {
+	require.True(t, str.ContainsFromSlice("taylor", []string{"ylo"}))
+	require.True(t, str.ContainsFromSlice("taylor", []string{"xxx", "ylo"}))
+	require.False(t, str.ContainsFromSlice("taylor", []string{"xxx"}))
+	require.False(t, str.ContainsFromSlice("taylor", []string{}))
+	require.False(t, str.ContainsFromSlice("taylor", []string{""}))
 }
