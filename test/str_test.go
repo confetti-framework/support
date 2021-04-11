@@ -117,6 +117,7 @@ func Test_ContainsFromSlice(t *testing.T) {
 	require.False(t, str.ContainsFromSlice("taylor", []string{}))
 	require.False(t, str.ContainsFromSlice("taylor", []string{""}))
 }
+
 func Test_ContainsAllFromSlice(t *testing.T) {
 	require.True(t, str.ContainsAllFromSlice("This is my name", []string{"This", "is"}))
 	require.True(t, str.ContainsAllFromSlice("This is my name", []string{"my", "ame"}))
@@ -126,4 +127,42 @@ func Test_ContainsAllFromSlice(t *testing.T) {
 	require.False(t, str.ContainsAllFromSlice("This is my name", []string{"are", "name"}))
 	require.False(t, str.ContainsAllFromSlice("taylor", []string{}))
 	require.False(t, str.ContainsAllFromSlice("taylor", []string{"", ""}))
+}
+
+func Test_EndsWith(t *testing.T) {
+	require.True(t, str.EndsWith("This is my name", "name"))
+	require.True(t, str.EndsWith("This is my name", "e"))
+	require.True(t, str.EndsWith("jason", "on"))
+	require.True(t, str.EndsWith("7", "7"))
+	require.True(t, str.EndsWith("a7", "7"))
+	require.False(t, str.EndsWith("jason", "no"))
+	require.False(t, str.EndsWith("jason", ""))
+	require.False(t, str.EndsWith("", ""))
+	// Test for multibyte string support
+	require.True(t, str.EndsWith("Jönköping", "öping"))
+	require.True(t, str.EndsWith("Malmö", "mö"))
+	require.True(t, str.EndsWith("Malmö", "mö"))
+	require.False(t, str.EndsWith("Jönköping", "oping"))
+	require.False(t, str.EndsWith("Malmö", "mo"))
+	require.True(t, str.EndsWith("你好", "好"))
+	require.False(t, str.EndsWith("你好", "你"))
+	require.False(t, str.EndsWith("你好", "a"))
+}
+
+func Test_StartsWith(t *testing.T) {
+	require.True(t, str.StartsWith("jason", "jas"))
+	require.True(t, str.StartsWith("jason", "jason"))
+	require.True(t, str.StartsWith("7a", "7"))
+	require.True(t, str.StartsWith("7", "7"))
+	require.False(t, str.StartsWith("jason", "J"))
+	require.False(t, str.StartsWith("jason", ""))
+	require.False(t, str.StartsWith("", ""))
+	// Test for multibyte string support
+	require.True(t, str.StartsWith("Jönköping", "Jö"))
+	require.True(t, str.StartsWith("Malmö", "Malmö"))
+	require.True(t, str.StartsWith("你好", "你"))
+	require.False(t, str.StartsWith("Jönköping", "Jonko"))
+	require.False(t, str.StartsWith("Malmö", "Malmo"))
+	require.False(t, str.StartsWith("你好", "好"))
+	require.False(t, str.StartsWith("你好", "a"))
 }

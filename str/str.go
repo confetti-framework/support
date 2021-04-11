@@ -117,12 +117,23 @@ func ContainsAllFromSlice(haystack string, needles []string) bool {
 	return true
 }
 
-//
-// func EndsWith(haystack string, needle string) bool {
-// 	// TODO
-// 	return false
-// }
-//
+
+func EndsWith(haystack string, needle string) bool {
+	if len(needle) == 0 {
+		return false
+	}
+
+	return strings.HasSuffix(haystack, needle)
+}
+
+func StartsWith(haystack string, needle string) bool {
+	if len(needle) == 0 {
+		return false
+	}
+
+	return strings.HasPrefix(haystack, needle)
+}
+
 // func Finish(value string, cap string) string {
 // 	// TODO
 // 	return ""
@@ -203,11 +214,6 @@ func ContainsAllFromSlice(haystack string, needles []string) bool {
 // }
 //
 // func SnakeWithDelimiter(value string, delimiter string) string {
-// 	// TODO
-// 	return ""
-// }
-//
-// func StartsWith(haystack string, needle string) string {
 // 	// TODO
 // 	return ""
 // }
