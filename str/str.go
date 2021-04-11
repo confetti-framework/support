@@ -82,8 +82,11 @@ func Between(subject string, from string, to string) string {
 }
 
 func Contains(haystack string, needle string) bool {
-	// TODO create tests
-	return strings.Index(haystack, needle) == -1
+	if len(needle) == 0 {
+		return false
+	}
+
+	return strings.Contains(haystack, needle)
 }
 
 // func ContainsFromSlice(haystack string, needle []string) bool {

@@ -55,15 +55,15 @@ func Test_AfterLast(t *testing.T) {
 	require.Equal(t, "", str.After("", ""))
 	require.Equal(t, "", str.After("", "han"))
 	require.Equal(t, "hannah", str.After("hannah", ""))
-	require.Equal(t,"tte", str.AfterLast("yvette", "yve"))
-	require.Equal(t,"e", str.AfterLast("yvette", "t"))
-	require.Equal(t,"e", str.AfterLast("ééé yvette", "t"))
-	require.Equal(t,"", str.AfterLast("yvette", "tte"))
-	require.Equal(t,"yvette", str.AfterLast("yvette", "xxxx"))
-	require.Equal(t,"te", str.AfterLast("yv0et0te", "0"))
-	require.Equal(t,"te", str.AfterLast("yv0et0te", "0"))
-	require.Equal(t,"te", str.AfterLast("yv2et2te", "2"))
-	require.Equal(t,"foo", str.AfterLast("----foo", "---"))
+	require.Equal(t, "tte", str.AfterLast("yvette", "yve"))
+	require.Equal(t, "e", str.AfterLast("yvette", "t"))
+	require.Equal(t, "e", str.AfterLast("ééé yvette", "t"))
+	require.Equal(t, "", str.AfterLast("yvette", "tte"))
+	require.Equal(t, "yvette", str.AfterLast("yvette", "xxxx"))
+	require.Equal(t, "te", str.AfterLast("yv0et0te", "0"))
+	require.Equal(t, "te", str.AfterLast("yv0et0te", "0"))
+	require.Equal(t, "te", str.AfterLast("yv2et2te", "2"))
+	require.Equal(t, "foo", str.AfterLast("----foo", "---"))
 }
 
 func Test_Before(t *testing.T) {
@@ -77,27 +77,36 @@ func Test_Before(t *testing.T) {
 }
 
 func Test_BeforeLast(t *testing.T) {
-	require.Equal(t,"yve", str.BeforeLast("yvette", "tte"))
-	require.Equal(t,"yvet", str.BeforeLast("yvette", "t"))
-	require.Equal(t,"ééé ", str.BeforeLast("ééé yvette", "yve"))
-	require.Equal(t,"", str.BeforeLast("yvette", "yve"))
-	require.Equal(t,"yvette", str.BeforeLast("yvette", "xxxx"))
-	require.Equal(t,"yvette", str.BeforeLast("yvette", ""))
-	require.Equal(t,"yv0et", str.BeforeLast("yv0et0te", "0"))
-	require.Equal(t,"yv0et", str.BeforeLast("yv0et0te", "0"))
-	require.Equal(t,"yv2et", str.BeforeLast("yv2et2te", "2"))
+	require.Equal(t, "yve", str.BeforeLast("yvette", "tte"))
+	require.Equal(t, "yvet", str.BeforeLast("yvette", "t"))
+	require.Equal(t, "ééé ", str.BeforeLast("ééé yvette", "yve"))
+	require.Equal(t, "", str.BeforeLast("yvette", "yve"))
+	require.Equal(t, "yvette", str.BeforeLast("yvette", "xxxx"))
+	require.Equal(t, "yvette", str.BeforeLast("yvette", ""))
+	require.Equal(t, "yv0et", str.BeforeLast("yv0et0te", "0"))
+	require.Equal(t, "yv0et", str.BeforeLast("yv0et0te", "0"))
+	require.Equal(t, "yv2et", str.BeforeLast("yv2et2te", "2"))
 }
 
 func Test_Between(t *testing.T) {
-	require.Equal(t,"abc", str.Between("abc", "", "c"))
-	require.Equal(t,"abc", str.Between("abc", "a", ""))
-	require.Equal(t,"abc", str.Between("abc", "", ""))
-	require.Equal(t,"b", str.Between("abc", "a", "c"))
-	require.Equal(t,"b", str.Between("dddabc", "a", "c"))
-	require.Equal(t,"b", str.Between("abcddd", "a", "c"))
-	require.Equal(t,"b", str.Between("dddabcddd", "a", "c"))
-	require.Equal(t,"nn", str.Between("hannah", "ha", "ah"))
-	require.Equal(t,"a]ab[b", str.Between("[a]ab[b]", "[", "]"))
-	require.Equal(t,"foo", str.Between("foofoobar", "foo", "bar"))
-	require.Equal(t,"bar", str.Between("foobarbar", "foo", "bar"))
+	require.Equal(t, "abc", str.Between("abc", "", "c"))
+	require.Equal(t, "abc", str.Between("abc", "a", ""))
+	require.Equal(t, "abc", str.Between("abc", "", ""))
+	require.Equal(t, "b", str.Between("abc", "a", "c"))
+	require.Equal(t, "b", str.Between("dddabc", "a", "c"))
+	require.Equal(t, "b", str.Between("abcddd", "a", "c"))
+	require.Equal(t, "b", str.Between("dddabcddd", "a", "c"))
+	require.Equal(t, "nn", str.Between("hannah", "ha", "ah"))
+	require.Equal(t, "a]ab[b", str.Between("[a]ab[b]", "[", "]"))
+	require.Equal(t, "foo", str.Between("foofoobar", "foo", "bar"))
+	require.Equal(t, "bar", str.Between("foobarbar", "foo", "bar"))
+}
+
+func Test_Contains(t *testing.T) {
+	require.True(t, str.Contains("taylor", "ylo"))
+	require.True(t, str.Contains("taylor", "taylor"))
+
+	require.False(t, str.Contains("taylor", "xxx"))
+	require.False(t, str.Contains("taylor", ""))
+	require.False(t, str.Contains("", ""))
 }
