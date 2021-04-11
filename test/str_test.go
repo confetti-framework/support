@@ -39,8 +39,8 @@ func Test_in_slice_with_integer(t *testing.T) {
 func Test_After(t *testing.T) {
 	// TODO: What if nothing is found?
 	require.Equal(t, "", str.After("", ""))
-	require.Equal(t, "hannah", str.After("hannah", ""))
 	require.Equal(t, "", str.After("", "han"))
+	require.Equal(t, "hannah", str.After("hannah", ""))
 	require.Equal(t, "nah", str.After("hannah", "han"))
 	require.Equal(t, "nah", str.After("hannah", "n"))
 	require.Equal(t, "nah", str.After("eee hannah", "han"))
@@ -53,8 +53,8 @@ func Test_After(t *testing.T) {
 func Test_AfterLast(t *testing.T) {
 	// TODO: What if nothing is found?
 	require.Equal(t, "", str.After("", ""))
-	require.Equal(t, "hannah", str.After("hannah", ""))
 	require.Equal(t, "", str.After("", "han"))
+	require.Equal(t, "hannah", str.After("hannah", ""))
 	require.Equal(t,"tte", str.AfterLast("yvette", "yve"))
 	require.Equal(t,"e", str.AfterLast("yvette", "t"))
 	require.Equal(t,"e", str.AfterLast("ééé yvette", "t"))
