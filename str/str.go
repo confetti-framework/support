@@ -71,3 +71,11 @@ func BeforeLast(input string, search string) string {
 
 	return input[:position]
 }
+
+func Between(input string, from string, to string) string {
+	if (len(from) == 0 || len(to) == 0) {
+		return input
+	}
+
+	return BeforeLast(After(input, from), to)
+}

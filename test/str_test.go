@@ -78,3 +78,18 @@ func Test_beforeLast(t *testing.T) {
 	require.Equal(t, "yvette", str.BeforeLast("yvette", ""))
 	require.Equal(t, "yv0et", str.BeforeLast("yv0et0te", "0"))
 }
+
+func Test_between(t *testing.T) {
+	require.Equal(t, " is my ", str.Between("This is my name", "This", "name"))
+	require.Equal(t, "abc", str.Between("abc", "", "c"))
+	require.Equal(t, "abc", str.Between("abc", "a", ""))
+	require.Equal(t, "abc", str.Between("abc", "", ""))
+	require.Equal(t, "b", str.Between("abc", "a", "c"))
+	require.Equal(t, "b", str.Between("dddabc", "a", "c"))
+	require.Equal(t, "b", str.Between("abcddd", "a", "c"))
+	require.Equal(t, "b", str.Between("dddabcddd", "a", "c"))
+	require.Equal(t, "nn", str.Between("hannah", "ha", "ah"))
+	require.Equal(t, "a]ab[b", str.Between("[a]ab[b]", "[", "]"))
+	require.Equal(t, "foo", str.Between("foofoobar", "foo", "bar"))
+	require.Equal(t, "bar", str.Between("foobarbar", "foo", "bar"))
+}
