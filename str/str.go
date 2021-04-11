@@ -73,7 +73,7 @@ func BeforeLast(input string, search string) string {
 }
 
 func Between(input string, from string, to string) string {
-	if (len(from) == 0 || len(to) == 0) {
+	if len(from) == 0 || len(to) == 0 {
 		return input
 	}
 
