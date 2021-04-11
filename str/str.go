@@ -103,10 +103,20 @@ func ContainsFromSlice(haystack string, needles []string) bool {
 	return false
 }
 
-// func ContainsAllFromSlice(haystack string, needle []string) bool {
-// 	// TODO
-// 	return false
-// }
+func ContainsAllFromSlice(haystack string, needles []string) bool {
+	if len(needles) == 0 {
+		return false
+	}
+
+	for _, needle := range needles {
+		if !Contains(haystack, needle){
+			return false
+		}
+	}
+
+	return true
+}
+
 //
 // func EndsWith(haystack string, needle string) bool {
 // 	// TODO

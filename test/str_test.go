@@ -117,3 +117,13 @@ func Test_ContainsFromSlice(t *testing.T) {
 	require.False(t, str.ContainsFromSlice("taylor", []string{}))
 	require.False(t, str.ContainsFromSlice("taylor", []string{""}))
 }
+func Test_ContainsAllFromSlice(t *testing.T) {
+	require.True(t, str.ContainsAllFromSlice("This is my name", []string{"This", "is"}))
+	require.True(t, str.ContainsAllFromSlice("This is my name", []string{"my", "ame"}))
+	require.True(t, str.ContainsAllFromSlice("taylor", []string{"tay", "ylo"}))
+	require.False(t, str.ContainsAllFromSlice("taylor", []string{"xxx", "ylo"}))
+	require.False(t, str.ContainsAllFromSlice("taylor", []string{"xxx", "tay"}))
+	require.False(t, str.ContainsAllFromSlice("This is my name", []string{"are", "name"}))
+	require.False(t, str.ContainsAllFromSlice("taylor", []string{}))
+	require.False(t, str.ContainsAllFromSlice("taylor", []string{"", ""}))
+}
