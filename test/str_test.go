@@ -67,6 +67,7 @@ func Test_AfterLast(t *testing.T) {
 }
 
 func Test_Before(t *testing.T) {
+	require.Equal(t, "hannah", str.Before("hannah", ""))
 	require.Equal(t, "han", str.Before("hannah", "nah"))
 	require.Equal(t, "ha", str.Before("hannah", "n"))
 	require.Equal(t, "ééé ", str.Before("ééé hannah", "han"))
