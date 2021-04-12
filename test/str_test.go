@@ -184,3 +184,9 @@ func Test_Finish(t *testing.T) {
 	require.Equal(t, "this/string/", str.Finish("this/string", "/"))
 	require.Equal(t, "this/string/", str.Finish("this/string/", "/"))
 }
+
+func Test_Start(t *testing.T) {
+	require.Equal(t, "/test/string", str.Start("test/string", "/"))
+	require.Equal(t, "/test/string", str.Start("/test/string", "/"))
+	require.Equal(t, "/test/string", str.Start("//test/string", "/"))
+}

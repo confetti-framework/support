@@ -149,6 +149,13 @@ func Finish(value string, cap string) string {
 	return re.ReplaceAllString(value, "") + cap
 }
 
+func Start(value string, prefix string) string {
+	quoted := regexp.QuoteMeta(prefix)
+
+	re := regexp.MustCompile("^(?:"+ quoted +")+")
+	return prefix + re.ReplaceAllString(value, "")
+}
+
 //
 //func Title(value string) string {
 //  // TODO
@@ -201,11 +208,6 @@ func Finish(value string, cap string) string {
 // }
 //
 // func ReplaceLast(search string, replace string, subject string) string {
-// 	// TODO
-// 	return ""
-// }
-//
-// func Start(value string, prefix string) string {
 // 	// TODO
 // 	return ""
 // }
