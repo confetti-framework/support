@@ -117,7 +117,6 @@ func ContainsAllFromSlice(haystack string, needles []string) bool {
 	return true
 }
 
-
 func EndsWith(haystack string, needle string) bool {
 	if len(needle) == 0 {
 		return false
@@ -132,6 +131,14 @@ func StartsWith(haystack string, needle string) bool {
 	}
 
 	return strings.HasPrefix(haystack, needle)
+}
+
+func Lower(value string) string {
+	return strings.ToLower(value)
+}
+
+func Upper(value string) string {
+	return strings.ToUpper(value)
 }
 
 // func Finish(value string, cap string) string {
@@ -155,11 +162,6 @@ func StartsWith(haystack string, needle string) bool {
 // }
 //
 // func LimitWords(value string, limit int, end string) string{
-// 	// TODO
-// 	return ""
-// }
-//
-// func Lower(value string) string {
 // 	// TODO
 // 	return ""
 // }
@@ -224,11 +226,6 @@ func StartsWith(haystack string, needle string) bool {
 // }
 //
 // func UcFirst(value string) string {
-// 	// TODO
-// 	return ""
-// }
-//
-// func Upper(value string) string {
 // 	// TODO
 // 	return ""
 // }

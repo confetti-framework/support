@@ -166,3 +166,13 @@ func Test_StartsWith(t *testing.T) {
 	require.False(t, str.StartsWith("你好", "好"))
 	require.False(t, str.StartsWith("你好", "a"))
 }
+
+func Test_Lower(t *testing.T) {
+	require.Equal(t, "foo bar baz", str.Lower("FOO BAR BAZ"))
+	require.Equal(t, "foo bar baz", str.Lower("fOo Bar bAz"))
+}
+
+func Test_Upper(t *testing.T) {
+	require.Equal(t, "FOO BAR BAZ", str.Upper("foo bar baz"))
+	require.Equal(t, "FOO BAR BAZ", str.Upper("fOo Bar bAZ"))
+}
