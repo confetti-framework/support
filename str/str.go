@@ -1,6 +1,7 @@
 package str
 
 import (
+	"regexp"
 	"strings"
 	"unicode"
 )
@@ -141,10 +142,18 @@ func Upper(value string) string {
 	return strings.ToUpper(value)
 }
 
-// func Finish(value string, cap string) string {
-// 	// TODO
-// 	return ""
-// }
+func Finish(value string, cap string) string {
+	quoted := regexp.QuoteMeta(cap)
+
+	re := regexp.MustCompile("(?:"+ quoted +")+$")
+	return re.ReplaceAllString(value, "") + cap
+}
+
+//
+//func Title(value string) string {
+//  // TODO
+//	return ""
+//}
 //
 // func Kebab(vale string) string {
 // 	// TODO
@@ -215,11 +224,6 @@ func Upper(value string) string {
 // 	return ""
 // }
 //
-// func SnakeWithDelimiter(value string, delimiter string) string {
-// 	// TODO
-// 	return ""
-// }
-//
 // func Studly(value string) string {
 // 	// TODO
 // 	return ""
@@ -230,28 +234,3 @@ func Upper(value string) string {
 // 	return ""
 // }
 //
-// func Title(value string) string {
-// 	// TODO
-// 	return ""
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

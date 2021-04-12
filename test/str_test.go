@@ -176,3 +176,11 @@ func Test_Upper(t *testing.T) {
 	require.Equal(t, "FOO BAR BAZ", str.Upper("foo bar baz"))
 	require.Equal(t, "FOO BAR BAZ", str.Upper("fOo Bar bAZ"))
 }
+
+func Test_Finish(t *testing.T) {
+	require.Equal(t, "abbc", str.Finish("ab", "bc"))
+	require.Equal(t, "abbc", str.Finish("abbcbc", "bc"))
+	require.Equal(t, "abcbbc", str.Finish("abcbbcbc", "bc"))
+	require.Equal(t, "this/string/", str.Finish("this/string", "/"))
+	require.Equal(t, "this/string/", str.Finish("this/string/", "/"))
+}
