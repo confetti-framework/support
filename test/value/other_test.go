@@ -126,3 +126,10 @@ func Test_set_string(t *testing.T) {
 	value := support.NewValue("val1")
 	require.Equal(t, "val1", value.Set("no_map", "v").Raw())
 }
+
+func Test_byte_slice_to_string(t *testing.T) {
+	value, err := support.NewValueE([]byte("dog"))
+	require.NotNil(t, err)
+	require.Equal(t, "can not create value from []byte", err.Error())
+	require.Equal(t, nil, value.Raw())
+}

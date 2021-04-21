@@ -22,6 +22,8 @@ func NewValue(val interface{}) Value {
 
 func NewValueE(val interface{}) (Value, error) {
 	switch val.(type) {
+	case []byte:
+		return Value{}, errors.WithStack(CanNotCreateValueFromByteSliceError)
 	case Collection, Map:
 		return Value{val}, nil
 	case Value:
