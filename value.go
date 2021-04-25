@@ -12,7 +12,16 @@ type Value struct {
 	source interface{}
 }
 
-func NewValue(val interface{}) Value {
+type prePredeclaredError struct {
+	error
+}
+
+func (w *prePredeclaredError) Unwrap() error { return w.error }
+
+func NewValue(val interface{}, preErr ...error) Value {
+	if len(preErr) > 0 {
+		val = prePredeclaredError{preErr[0]}
+	}
 	result, err := NewValueE(val)
 	if err != nil {
 		panic(err)
@@ -164,7 +173,12 @@ func (v Value) StringE() (string, error) {
 	var result string
 	var err error
 
-	switch source := v.source.(type) {
+	source := v.source
+	if  err, isPre := source.(prePredeclaredError); isPre {
+		return "", errors.Unwrap(err)
+	}
+
+	switch source := source.(type) {
 	case Collection:
 		result, err = source.First().StringE()
 	case Map:
