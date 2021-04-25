@@ -23,7 +23,7 @@ func NewValue(val interface{}) Value {
 func NewValueE(val interface{}) (Value, error) {
 	switch val.(type) {
 	case []byte:
-		return Value{}, errors.WithStack(CanNotCreateValueFromByteSliceError)
+		return Value{val}, nil
 	case Collection, Map:
 		return Value{val}, nil
 	case Value:
@@ -194,6 +194,8 @@ func (v Value) IntE() (int, error) {
 		result, err = source.First().IntE()
 	case Map:
 		result, err = source.First().IntE()
+	case []byte:
+		result, err = cast.ToIntE(string(source))
 	default:
 		result, err = cast.ToIntE(source)
 	}
@@ -219,6 +221,8 @@ func (v Value) FloatE() (float64, error) {
 		result, err = source.First().FloatE()
 	case Map:
 		result, err = source.First().FloatE()
+	case []byte:
+		result, err = cast.ToFloat64E(string(source))
 	default:
 		result, err = cast.ToFloat64E(source)
 	}
@@ -227,7 +231,13 @@ func (v Value) FloatE() (float64, error) {
 }
 
 func (v Value) Bool() bool {
-	switch v.source {
+	source := v.source
+	switch v := source.(type) {
+	case []byte:
+		source = string(v)
+	}
+
+	switch source {
 	case true, 1, "1", "true", "on", "yes":
 		return true
 	default:

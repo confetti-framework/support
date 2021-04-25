@@ -4,7 +4,7 @@ import (
 	"os"
 )
 
-func Str(search string) string {
+func String(search string) string {
 	env, _ := os.LookupEnv(search)
 
 	return env
