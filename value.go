@@ -12,34 +12,41 @@ type Value struct {
 	source interface{}
 }
 
-func NewValue(val interface{}) Value {
-	result, err := NewValueE(val)
-	if err != nil {
-		panic(err)
-	}
-	return result
+type nonValueError struct {
+	error
 }
 
-func NewValueE(val interface{}) (Value, error) {
+func (w nonValueError) Unwrap() error {
+	return w.error
+}
+
+func NewValue(val interface{}, preErr ...error) Value {
+	if len(preErr) > 0 {
+		val = nonValueError{preErr[0]}
+	}
+
 	switch val.(type) {
 	case []byte:
-		return Value{}, errors.WithStack(CanNotCreateValueFromByteSliceError)
+		return Value{val}
 	case Collection, Map:
-		return Value{val}, nil
+		return Value{val}
 	case Value:
-		return val.(Value), nil
+		return val.(Value)
 	}
 
 	switch Kind(val) {
 	case reflect.Slice, reflect.Array:
 		result := NewCollection(val)
-		return Value{result}, nil
+		return Value{result}
 	case reflect.Map:
 		result, err := NewMapE(val)
-		return Value{result}, err
+		if err != nil {
+			val = nonValueError{err}
+		}
+		val = result
 	}
 
-	return Value{val}, nil
+	return Value{val}
 }
 
 func (v Value) Source() interface{} {
@@ -124,6 +131,10 @@ func (v Value) GetE(key string) (Value, error) {
 
 // A value can contain a collection.
 func (v Value) Collection() Collection {
+	if  err, isPre := v.source.(nonValueError); isPre {
+		panic(err)
+	}
+
 	switch v.source.(type) {
 	case Collection:
 		return v.source.(Collection)
@@ -143,9 +154,14 @@ func (v Value) Map() Map {
 }
 
 func (v Value) MapE() (Map, error) {
-	switch valueType := v.source.(type) {
+	source := v.source
+	if  err, isPre := source.(nonValueError); isPre {
+		return Map{}, errors.Unwrap(err)
+	}
+
+	switch valueType := source.(type) {
 	case Map:
-		return v.source.(Map), nil
+		return source.(Map), nil
 	default:
 		return nil, errors.New("can't create map from reflect.Kind " + strconv.Itoa(int(Kind(valueType))))
 	}
@@ -164,7 +180,12 @@ func (v Value) StringE() (string, error) {
 	var result string
 	var err error
 
-	switch source := v.source.(type) {
+	source := v.source
+	if  err, isPre := source.(nonValueError); isPre {
+		return "", errors.Unwrap(err)
+	}
+
+	switch source := source.(type) {
 	case Collection:
 		result, err = source.First().StringE()
 	case Map:
@@ -189,11 +210,18 @@ func (v Value) IntE() (int, error) {
 	var result int
 	var err error
 
-	switch source := v.source.(type) {
+	source := v.source
+	if  err, isPre := source.(nonValueError); isPre {
+		return 0, errors.Unwrap(err)
+	}
+
+	switch source := source.(type) {
 	case Collection:
 		result, err = source.First().IntE()
 	case Map:
 		result, err = source.First().IntE()
+	case []byte:
+		result, err = cast.ToIntE(string(source))
 	default:
 		result, err = cast.ToIntE(source)
 	}
@@ -214,11 +242,18 @@ func (v Value) FloatE() (float64, error) {
 	var result float64
 	var err error
 
-	switch source := v.source.(type) {
+	source := v.source
+	if  err, isPre := source.(nonValueError); isPre {
+		return 0, errors.Unwrap(err)
+	}
+
+	switch source := source.(type) {
 	case Collection:
 		result, err = source.First().FloatE()
 	case Map:
 		result, err = source.First().FloatE()
+	case []byte:
+		result, err = cast.ToFloat64E(string(source))
 	default:
 		result, err = cast.ToFloat64E(source)
 	}
@@ -227,7 +262,13 @@ func (v Value) FloatE() (float64, error) {
 }
 
 func (v Value) Bool() bool {
-	switch v.source {
+	source := v.source
+	switch v := source.(type) {
+	case []byte:
+		source = string(v)
+	}
+
+	switch source {
 	case true, 1, "1", "true", "on", "yes":
 		return true
 	default:
@@ -289,7 +330,7 @@ func (v Value) SetE(key string, input interface{}) (Value, error) {
 		if err != nil {
 			return v, err
 		}
-		return NewValueE(nestedMap)
+		return NewValue(nestedMap), nil
 	case Collection:
 		collection, err := source.SetE(key, input)
 		v.source = collection
@@ -316,6 +357,13 @@ func (v Value) OnlyE(keys ...string) (Value, error) {
 		return NewValue(result), err
 	}
 	return v, nil
+}
+
+func (v Value) Error() error {
+	if  err, isPre := v.source.(nonValueError); isPre {
+		return errors.Unwrap(err)
+	}
+	return nil
 }
 
 // convert keys with an asterisk to usable keys

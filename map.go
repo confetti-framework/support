@@ -23,7 +23,7 @@ func NewMapE(itemsRange ...interface{}) (Map, error) {
 	for _, rawItems := range itemsRange {
 		v := reflect.ValueOf(rawItems)
 		if v.Kind() != reflect.Map {
-			err = CanNotCreateMapError.Wrap("type %s", v.Kind().String())
+			err = errors.WithStack(CanNotCreateMapError.Wrap("type %s", v.Kind().String()))
 			continue
 		}
 
@@ -210,7 +210,7 @@ func (m Map) Merge(maps ...Map) Map {
 	return m
 }
 
-// Generates a new struct with the same data as the old struct
+// Copy generates a new struct with the same data as the old struct
 func (m Map) Copy() Map {
 	newMap := Map{}
 	for key, value := range m {
