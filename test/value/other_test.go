@@ -128,29 +128,29 @@ func Test_set_string(t *testing.T) {
 }
 
 func Test_byte_slice_to_string(t *testing.T) {
-	value, err := support.NewValueE([]byte("dog"))
-	require.Nil(t, err)
+	value := support.NewValue([]byte("dog"))
+	require.Nil(t, value.Error())
 	require.Equal(t, []byte("dog"), value.Raw())
 	require.Equal(t, "dog", value.String())
 }
 
 func Test_byte_slice_to_int(t *testing.T) {
-	value, err := support.NewValueE([]byte("5"))
-	require.Nil(t, err)
+	value := support.NewValue([]byte("5"))
+	require.Nil(t, value.Error())
 	require.Equal(t, []byte("5"), value.Raw())
 	require.Equal(t, 5, value.Int())
 }
 
 func Test_byte_slice_to_float(t *testing.T) {
-	value, err := support.NewValueE([]byte("5"))
-	require.Nil(t, err)
+	value := support.NewValue([]byte("5"))
+	require.Nil(t, value.Error())
 	require.Equal(t, []byte("5"), value.Raw())
 	require.Equal(t, 5., value.Float())
 }
 
 func Test_byte_slice_to_bool(t *testing.T) {
-	value, err := support.NewValueE([]byte("true"))
-	require.Nil(t, err)
+	value := support.NewValue([]byte("true"))
+	require.Nil(t, value.Error())
 	require.Equal(t, []byte("true"), value.Raw())
 	require.True(t, value.Bool())
 }
