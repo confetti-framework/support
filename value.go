@@ -105,13 +105,13 @@ func (v Value) GetE(key string) (Value, error) {
 		}
 		collection := v.source.(Collection)
 		if len(collection) < (keyInt + 1) {
-			return Value{}, CanNotFoundValueError.Wrap("key '%s'%s", currentKey, getKeyInfo(key, currentKey))
+			return Value{}, errors.Wrap(CanNotFoundValueError, "key '%s'%s", currentKey, getKeyInfo(key, currentKey))
 		}
 		return collection[keyInt].GetE(nextKey)
 	case Map:
 		value, ok := v.source.(Map)[currentKey]
 		if !ok {
-			return value, CanNotFoundValueError.Wrap("key '%s'%s", currentKey, getKeyInfo(key, currentKey))
+			return value, errors.Wrap(CanNotFoundValueError, "key '%s'%s", currentKey, getKeyInfo(key, currentKey))
 		}
 		return value.GetE(nextKey)
 	default:
@@ -317,7 +317,7 @@ func (v Value) SetE(key string, input interface{}) (Value, error) {
 		v.source = NewCollection()
 	}
 	if _, isCollection := v.source.(Collection); !isCollection && currentKey == "*" {
-		return v, CanNotAppendValueError.Wrap("can not append value on '%s'", Kind(v.source))
+		return v, errors.Wrap(CanNotAppendValueError, "can not append value on '%s'", Kind(v.source))
 	}
 	// if value is nil, create a map to set the value
 	if v.source == nil {

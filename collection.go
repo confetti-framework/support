@@ -84,11 +84,11 @@ func (c Collection) GetE(key string) (Value, error) {
 
 	index, err := strconv.Atoi(currentKey)
 	if err != nil {
-		return Value{}, InvalidCollectionKeyError.Wrap("'%s' can only be a number or *", key)
+		return Value{}, errors.Wrap(InvalidCollectionKeyError, "'%s' can only be a number or *", key)
 	}
 
 	if len(c) < (index + 1) {
-		return Value{}, CanNotFoundValueError.Wrap("'%s' not found", key)
+		return Value{}, errors.Wrap(CanNotFoundValueError, "'%s' not found", key)
 	}
 
 	return c[index].GetE(joinRest(rest))
@@ -114,7 +114,7 @@ func (c Collection) SetE(key string, value interface{}) (Collection, error) {
 	currentKey, rest := splitKey(key)
 	_, err := strconv.Atoi(currentKey)
 	if currentKey != "*" && err != nil {
-		return c, InvalidCollectionKeyError.Wrap("key '%s' can only begin with an asterisk or number", key)
+		return c, errors.Wrap(InvalidCollectionKeyError, "key '%s' can only begin with an asterisk or number", key)
 	}
 
 	if len(rest) == 0 {

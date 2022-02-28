@@ -23,7 +23,7 @@ func NewMapE(itemsRange ...interface{}) (Map, error) {
 	for _, rawItems := range itemsRange {
 		v := reflect.ValueOf(rawItems)
 		if v.Kind() != reflect.Map {
-			err = errors.WithStack(CanNotCreateMapError.Wrap("type %s", v.Kind().String()))
+			err = errors.WithStack(errors.Wrap(CanNotCreateMapError, "type %s", v.Kind().String()))
 			continue
 		}
 
@@ -101,7 +101,7 @@ func (m Map) GetE(key string) (Value, error) {
 	}
 	value, found = m[currentKey]
 	if !found {
-		return Value{}, CanNotFoundValueError.Wrap("key '%s'%s", currentKey, getKeyInfo(key, currentKey))
+		return Value{}, errors.Wrap(CanNotFoundValueError, "key '%s'%s", currentKey, getKeyInfo(key, currentKey))
 	}
 
 	switch value.Source().(type) {
