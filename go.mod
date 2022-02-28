@@ -1,9 +1,9 @@
 module github.com/confetti-framework/support
 
-go 1.15
+go 1.17
 
 require (
-	github.com/confetti-framework/errors v0.11.0
+	github.com/confetti-framework/errors v0.12.0
 	github.com/confetti-framework/syslog v0.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/joho/godotenv v1.3.0
